@@ -159,7 +159,7 @@ export default function Home() {
                     <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div> Google AdSense
                 </div>
               </div>
-              <a href="www.https://heiyuquiz.com/" target="_blank" className="text-white font-bold border-b border-purple-500 pb-1 self-start hover:text-purple-400 transition">Play Now →</a>
+              <a href="https://www.heiyuquiz.com/" target="_blank" className="text-white font-bold border-b border-purple-500 pb-1 self-start hover:text-purple-400 transition">Play Now →</a>
             </div>
           </div>
         </div>
