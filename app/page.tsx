@@ -11,7 +11,6 @@ export default function Home() {
   const [budgetIndex, setBudgetIndex] = useState(0);
   const [quizIndex, setQuizIndex] = useState(0);
   
-  // 👇 STATE FOR THE CONTACT MODAL
   const [showContact, setShowContact] = useState(false);
 
   const budgetImages = [
@@ -37,17 +36,19 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#050505] text-white selection:bg-indigo-500 selection:text-white font-sans">
       
-   {/* 1. NAVIGATION */}
-      <nav className="fixed top-0 w-full z-50 bg-[#050505]/80 backdrop-blur-md border-b border-white/5">
-        <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+      {/* 1. NAVIGATION (Mobile Stacked / Desktop Row) */}
+      <nav className="fixed top-0 w-full z-50 bg-[#050505]/95 backdrop-blur-md border-b border-white/5">
+        <div className="max-w-6xl mx-auto px-6 py-4 md:h-20 flex flex-col md:flex-row items-center justify-between">
+          
+          {/* Logo */}
           <div className="text-xl font-bold tracking-tighter text-white">
             HEIYU<span className="text-indigo-500">DIGITAL</span>
           </div>
-          <div className="flex gap-8 text-sm font-medium text-gray-400 items-center">
+          
+          {/* Links - Pushed down on mobile with mt-3 */}
+          <div className="flex gap-6 md:gap-8 text-sm font-medium text-gray-400 items-center mt-3 md:mt-0">
             <a href="#work" className="hover:text-white transition">Work</a>
             <a href="#services" className="hover:text-white transition">Services</a>
-            
-            {/* 👇 UPDATED: Opens the Modal directly instead of scrolling */}
             <button 
               onClick={() => setShowContact(true)} 
               className="hover:text-white transition"
@@ -59,7 +60,8 @@ export default function Home() {
       </nav>
 
       {/* 2. HERO SECTION */}
-      <section className="pt-32 pb-12 md:pt-40 md:pb-24 px-6 max-w-5xl mx-auto flex flex-col items-center text-center">
+      {/* 👇 Increased pt-44 on mobile to account for the taller stacked menu */}
+      <section className="pt-44 pb-12 md:pt-48 md:pb-24 px-6 max-w-5xl mx-auto flex flex-col items-center text-center">
         <div className="inline-block px-4 py-1.5 mb-8 border border-indigo-500/30 rounded-full bg-indigo-500/10 text-indigo-300 text-xs font-bold tracking-widest uppercase shadow-[0_0_15px_rgba(99,102,241,0.3)]">
           Full-Stack & Database Architecture
         </div>
@@ -71,7 +73,7 @@ export default function Home() {
           Specializing in high-performance WebApps, Database Systems, and Legacy Modernization for the real world.
         </p>
         
-       {/* HERO BUTTON - Opens Modal Directly */}
+        {/* HERO BUTTON */}
         <div className="flex justify-center w-full">
           <button 
             onClick={() => setShowContact(true)}
@@ -195,7 +197,7 @@ export default function Home() {
         <h2 className="text-4xl md:text-5xl font-bold mb-8 tracking-tight">Ready to build?</h2>
         <p className="text-gray-300 mb-10 max-w-xl mx-auto text-lg">Whether you need a full app build or help fixing a legacy database, we are ready to code.</p>
         
-        {/* 👇 THE BUTTON (Opens Modal) */}
+        {/* FOOTER BUTTON */}
         <button 
           onClick={() => setShowContact(true)}
           className="inline-block px-10 py-4 bg-white text-black font-bold rounded-full hover:bg-gray-200 transition transform hover:scale-105 duration-200 shadow-xl"
@@ -203,36 +205,21 @@ export default function Home() {
           Get in Touch
         </button>
         
-        {/* Optional: Simple mailto link underneath just in case */}
-        <div className="mt-4">
-            <a href="mailto:info@heiyudigital.com" className="text-sm text-gray-500 hover:text-white transition"></a>
-        </div>
-        
         <div className="mt-16 md:mt-24 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-400 font-mono">
            <span>© {new Date().getFullYear()} HeiyuDigital. All rights reserved. Dublin, Ireland.</span>
            <Link href="/privacy" className="hover:text-white underline decoration-gray-600 underline-offset-4">Privacy & Cookies</Link>
         </div>
       </footer>
 
-      {/* 👇 CONTACT FORM MODAL (Pop Out) */}
+ {/* MODAL */}
       {showContact && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 bg-black/80 backdrop-blur-md animate-fade-in">
-          {/* Close Background Click */}
+          {/* Background Click closes it */}
           <div className="absolute inset-0" onClick={() => setShowContact(false)}></div>
           
           <div className="relative w-full max-w-md z-10 animate-scale-up">
-            {/* Close Button */}
-            <button 
-                onClick={() => setShowContact(false)}
-                className="absolute -top-12 right-0 md:-right-12 text-gray-400 hover:text-white transition p-2"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-            
-            {/* The Actual Form Component */}
-            <ContactForm />
+            {/* 👇 WE PASS THE CLOSE FUNCTION DOWN HERE */}
+            <ContactForm onClose={() => setShowContact(false)} />
           </div>
         </div>
       )}
