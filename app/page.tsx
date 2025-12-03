@@ -70,7 +70,7 @@ export default function Home() {
           <br /> Not Just Websites.
         </h1>
         <p className="text-xl text-gray-300 max-w-2xl mb-10 leading-relaxed">
-          Specializing in high-performance WebApps, Database Systems, and Legacy Modernization for the real world.
+          Specializing in high performance WebApps, Database Systems, and Legacy Modernization for the real world.
         </p>
         
         {/* HERO BUTTON */}
@@ -98,8 +98,8 @@ export default function Home() {
               </div>
               <h3 className="text-4xl font-bold mb-4 text-white">HeiyuBudget</h3>
               <p className="text-gray-300 mb-8 text-lg leading-relaxed">
-                A tax compliance tool designed for the Transport Industry. 
-                Features AI Voice-Input for hands-free logging and complex date logic for Irish Tax Weeks.
+               A global tax-tracking tool built for drivers. Uses AI voice-input for instant, hands-free logging
+                with automatic time-zone and date logic based on your phone’s location. Anyone will find this helpful! 
               </p>
               <div className="grid grid-cols-2 gap-4 mb-10 text-sm text-gray-400 font-mono">
                 <div className="flex items-center gap-2">
@@ -148,8 +148,8 @@ export default function Home() {
               </div>
               <h3 className="text-4xl font-bold mb-4 text-white">HeiyuQuiz</h3>
               <p className="text-gray-300 mb-8 text-lg leading-relaxed">
-                A real-time multiplayer trivia engine. 
-                Capable of scaling to thousands of concurrent users with dynamic ad-insertion and AI-powered question generation.
+                A real-time multiplayer quiz engine built to scale. Supports thousands of players,
+                 dynamic ad-insertion, and AI-generated trivia for fast, competitive gameplay.
               </p>
               <div className="grid grid-cols-2 gap-4 mb-10 text-sm text-gray-400 font-mono">
                 <div className="flex items-center gap-2">
@@ -176,17 +176,17 @@ export default function Home() {
             <div className="p-8 rounded-2xl bg-[#111] border border-white/5 hover:border-indigo-500/50 transition group hover:-translate-y-1 duration-300">
               <div className="w-12 h-12 bg-indigo-500/10 text-indigo-500 rounded-xl flex items-center justify-center text-2xl mb-6 group-hover:bg-indigo-500 group-hover:text-white transition">🚀</div>
               <h3 className="text-xl font-bold mb-3">Custom Web Apps</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">We build fast, secure applications using Next.js and Supabase. Perfect for SaaS products, internal tools, and client portals.</p>
+              <p className="text-sm text-gray-400 leading-relaxed">We build fast, secure applications using Next.js and Supabase perfect for SaaS products, internal tools, dashboards, and client portals.</p>
             </div>
             <div className="p-8 rounded-2xl bg-[#111] border border-white/5 hover:border-purple-500/50 transition group hover:-translate-y-1 duration-300">
               <div className="w-12 h-12 bg-purple-500/10 text-purple-500 rounded-xl flex items-center justify-center text-2xl mb-6 group-hover:bg-purple-500 group-hover:text-white transition">🗄️</div>
               <h3 className="text-xl font-bold mb-3">Database Architecture</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">Organize your data with scalable SQL structures. We handle permissions, security (RLS), and complex queries.</p>
+              <p className="text-sm text-gray-400 leading-relaxed">We design scalable SQL databases with role based access (RLS), high-performance queries, and secure data flows for apps of any size..</p>
             </div>
             <div className="p-8 rounded-2xl bg-[#111] border border-white/5 hover:border-pink-500/50 transition group hover:-translate-y-1 duration-300">
               <div className="w-12 h-12 bg-pink-500/10 text-pink-500 rounded-xl flex items-center justify-center text-2xl mb-6 group-hover:bg-pink-500 group-hover:text-white transition">⚡</div>
               <h3 className="text-xl font-bold mb-3">Legacy Modernization</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">Have an old system? We rebuild it with modern tech without losing your data. We bridge the gap between old and new.</p>
+              <p className="text-sm text-gray-400 leading-relaxed">Have an old system? We rebuild it with modern tech without losing data. Faster, secure, and future-proof bridging the gap between old and new.</p>
             </div>
           </div>
         </div>
@@ -195,7 +195,7 @@ export default function Home() {
       {/* 5. FOOTER */}
       <footer id="contact" className="py-12 md:py-24 px-6 text-center">
         <h2 className="text-4xl md:text-5xl font-bold mb-8 tracking-tight">Ready to build?</h2>
-        <p className="text-gray-300 mb-10 max-w-xl mx-auto text-lg">Whether you need a full app build or help fixing a legacy database, we are ready to code.</p>
+        <p className="text-gray-300 mb-10 max-w-xl mx-auto text-lg">Apps. Websites. Database fixes. We’re ready to code.</p>
         
         {/* FOOTER BUTTON */}
         <button 
