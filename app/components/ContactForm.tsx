@@ -16,8 +16,9 @@ export default function ContactForm({ onClose }: ContactFormProps) {
     setResult("");
 
     const formData = new FormData(e.target);
-    
-    // 👇 PASTE YOUR ACCESS KEY HERE
+    formData.append("topic", formData.get("subject") as string);
+
+    // 👇 ACCESS KEY HERE
     formData.append("access_key", "4552e113-b8ed-4bce-9dde-ce725f43b955"); 
 
     try {
