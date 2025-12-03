@@ -76,15 +76,15 @@ export default function ContactForm({ onClose }: ContactFormProps) {
           <div className="flex flex-col gap-2">
             <label className="flex items-center gap-3 cursor-pointer p-2 md:p-3 rounded-xl bg-[#050505] border border-white/10 hover:border-indigo-500/50 transition group">
               <input type="radio" name="subject" value="New Project" required className="accent-indigo-500 w-4 h-4 cursor-pointer" />
-              <span className="text-xs md:text-sm text-gray-300 group-hover:text-white transition">HeiyuDigital (Start a Project)</span>
+              <span className="text-xs md:text-sm text-gray-300 group-hover:text-white transition">HeiyuDigital</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer p-2 md:p-3 rounded-xl bg-[#050505] border border-white/10 hover:border-indigo-500/50 transition group">
               <input type="radio" name="subject" value="HeiyuBudget Support" required className="accent-indigo-500 w-4 h-4 cursor-pointer" />
-              <span className="text-xs md:text-sm text-gray-300 group-hover:text-white transition">HeiyuBudget (Taxi App)</span>
+              <span className="text-xs md:text-sm text-gray-300 group-hover:text-white transition">HeiyuBudget </span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer p-2 md:p-3 rounded-xl bg-[#050505] border border-white/10 hover:border-indigo-500/50 transition group">
               <input type="radio" name="subject" value="HeiyuQuiz Feedback" required className="accent-indigo-500 w-4 h-4 cursor-pointer" />
-              <span className="text-xs md:text-sm text-gray-300 group-hover:text-white transition">HeiyuQuiz (Game)</span>
+              <span className="text-xs md:text-sm text-gray-300 group-hover:text-white transition">HeiyuQuiz</span>
             </label>
           </div>
         </div>
