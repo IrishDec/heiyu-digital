@@ -6,8 +6,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Heiyu Digital",
-  description: "High-performance web solutions.",
+  title: "Heiyu Digital | Dublin Web Apps",
+  description: "Dublin-based high-performance web apps and systems.",
   verification: {
     google: "NRtudc68IJ9OR9WiLTIgUYK6gh3ACq6SOYikxjIOIoY",
   },
