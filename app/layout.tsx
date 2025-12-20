@@ -8,9 +8,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Heiyu Digital",
   description: "High-performance web solutions.",
-  icons: {
-    icon: "/images/favicon.png",
-  },
+icons: {
+  icon: "/favicon.ico",
+},
 };
 
 export default function RootLayout({
