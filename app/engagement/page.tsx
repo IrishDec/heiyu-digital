@@ -1,6 +1,24 @@
+"use client";
+
+import { useEffect } from "react";
+
 export default function EngagementPage() {
- return (
-  <>
+
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    // @ts-ignore
+    if (window.gtag) {
+      // @ts-ignore
+      window.gtag("config", "G-JHMBLK5970", {
+        page_path: "/engagement",
+      });
+    }
+  }
+}, []);
+
+  return (
+    <>
+
     {/* NAV */}
     <nav className="fixed top-0 w-full z-50 bg-[#050505]/95 backdrop-blur-md border-b border-white/5">
       <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
