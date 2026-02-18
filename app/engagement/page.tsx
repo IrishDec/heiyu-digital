@@ -103,18 +103,12 @@ useEffect(() => {
   </div>
 
   <div className="px-8 py-6">
-  <form
-    action="https://mypos.com/vmp/btn/BSN42EUOGKP95"
-    method="post"
-    target="_blank"
-  >
-    <button
-      type="submit"
-      className="w-full bg-purple-600 hover:bg-purple-500 py-3 rounded-lg font-semibold transition"
+  <a
+      href="/contact"
+      className="block w-full text-center bg-purple-600 hover:bg-purple-500 py-3 rounded-lg font-semibold transition"
     >
-      Book Event License
-    </button>
-  </form>
+      Contact Us
+    </a>
 </div>
 
 
@@ -153,14 +147,13 @@ useEffect(() => {
   </div>
 
  <div className="px-8 py-6">
-  <form action="https://mypos.com/vmp/btn/B72WMW88JOP05" method="post" target="_blank">
-    <button
-      type="submit"
-      className="w-full bg-purple-600 hover:bg-purple-500 py-3 rounded-lg font-semibold transition"
+   <a
+      href="/contact"
+      className="block w-full text-center bg-purple-600 hover:bg-purple-500 py-3 rounded-lg font-semibold transition"
     >
-      Activate Branded Pro
-    </button>
-  </form>
+      Contact Us
+    </a>
+
 </div>
 
 
