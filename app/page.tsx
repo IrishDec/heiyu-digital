@@ -45,6 +45,7 @@ export default function Home() {
 
           <div className="flex gap-6 md:gap-8 text-sm font-medium text-gray-400 items-center mt-3 md:mt-0">
             <a href="#work" className="hover:text-white transition">Work</a>
+            <a href="/engagement" className="text-white">Engagement</a>
             <a href="#services" className="hover:text-white transition">Services</a>
             <button onClick={() => setShowContact(true)} className="hover:text-white transition">Contact</button>
           </div>
@@ -183,7 +184,8 @@ export default function Home() {
               <h3 className="text-4xl font-bold mb-4 text-white">HeiyuQuiz</h3>
 
               <p className="text-gray-300 mb-8 text-lg leading-relaxed">
-              A real-time multiplayer quiz engine built to scale. Supports thousands of players, dynamic ad-insertion, and AI-generated trivia for fast, competitive gameplay.
+             HeiyuQuiz is a scalable real-time multiplayer quiz engine powering branded engagement experiences worldwide.
+Run live competitions with up to 300 concurrent players, AI-generated or custom content, speed-based ranking, and full white-label deployment under your own brand.
               </p>
 
               <a
@@ -199,6 +201,14 @@ export default function Home() {
 >
   Case Study →
 </button>
+
+<a
+  href="/engagement"
+  className="mt-4 text-white font-bold border-b border-purple-500 pb-1 self-start hover:text-purple-400 transition"
+>
+  White-Label Solutions →
+</a>
+
 
             </div>
           </div>
