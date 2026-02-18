@@ -33,18 +33,11 @@ export default function EngagementPage() {
 
         <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
           <a
-            href="https://heiyuquiz.com"
+            href="https://www.heiyuquiz.com/"
             target="_blank"
             className="px-6 py-3 bg-purple-600 hover:bg-purple-500 rounded-lg font-semibold transition"
           >
             Try Live Demo
-          </a>
-
-          <a
-            href="/contact"
-            className="px-6 py-3 border border-gray-600 hover:border-white rounded-lg font-semibold transition"
-          >
-            Launch Your Branded Version
           </a>
         </div>
 
