@@ -71,7 +71,8 @@ useEffect(() => {
 
   <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
 
-  <div className="bg-zinc-900 border border-gray-800 rounded-2xl overflow-hidden transition hover:border-purple-600">
+  <div className="bg-zinc-900 border border-gray-800 rounded-2xl overflow-hidden transition hover:border-purple-600 flex flex-col">
+
 
   <div className="px-8 py-6 border-b border-gray-800">
     <h3 className="text-2xl font-semibold">Event License</h3>
@@ -102,7 +103,8 @@ useEffect(() => {
     </div>
   </div>
 
-  <div className="px-8 py-6">
+  <div className="px-8 py-6 mt-auto">
+
   <a
       href="/contact"
       className="block w-full text-center bg-purple-600 hover:bg-purple-500 py-3 rounded-lg font-semibold transition"
@@ -115,7 +117,8 @@ useEffect(() => {
 </div>
 
 
-        <div className="bg-zinc-900 border border-gray-800 rounded-2xl overflow-hidden transition hover:border-purple-600">
+       <div className="bg-zinc-900 border border-gray-800 rounded-2xl overflow-hidden transition hover:border-purple-600 flex flex-col">
+
 
   <div className="px-8 py-6 border-b border-gray-800">
     <h3 className="text-2xl font-semibold">Branded Pro</h3>
@@ -146,7 +149,8 @@ useEffect(() => {
     </div>
   </div>
 
- <div className="px-8 py-6">
+<div className="px-8 py-6 mt-auto">
+
    <a
       href="/contact"
       className="block w-full text-center bg-purple-600 hover:bg-purple-500 py-3 rounded-lg font-semibold transition"
@@ -160,7 +164,8 @@ useEffect(() => {
 </div>
 
 
-         <div className="bg-zinc-900 border border-gray-800 rounded-2xl overflow-hidden transition hover:border-purple-600">
+       <div className="bg-zinc-900 border border-gray-800 rounded-2xl overflow-hidden transition hover:border-purple-600 flex flex-col">
+
 
   <div className="px-8 py-6 border-b border-gray-800">
     <h3 className="text-2xl font-semibold">Integrated Enterprise</h3>
@@ -191,7 +196,8 @@ useEffect(() => {
     </div>
   </div>
 
-  <div className="px-8 py-6">
+  <div className="px-8 py-6 mt-auto">
+
     <a
       href="/contact"
       className="block w-full text-center bg-purple-600 hover:bg-purple-500 py-3 rounded-lg font-semibold transition"
