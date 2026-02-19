@@ -153,7 +153,7 @@ export default function MVPPage() {
                 hover:-translate-y-1">
 
       <h3 className="text-xl font-semibold text-white">Full MVP Build</h3>
-      <p className="text-indigo-500 mt-2 text-lg font-semibold">From €8,000  6 - 8 Weeks</p>
+      <p className="text-indigo-500 mt-2 text-lg font-semibold">From €8,000 · 6 - 8 Weeks</p>
 
       <ul className="mt-6 space-y-3 text-gray-400 text-sm">
         <li>• Core feature build</li>
