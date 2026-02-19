@@ -33,7 +33,7 @@ export default function MVPPage() {
     {/* Desktop Menu */}
     <div className="hidden md:flex gap-8 text-sm font-medium text-gray-400 items-center">
       <a href="/" className="hover:text-white transition">Home</a>
-      <a href="/engagement" className="hover:text-white transition">Engagement</a>
+      <a href="/engagement" className="hover:text-white transition">Quiz Platform</a>
       <a href="/mvp" className="hover:text-white transition">MVP</a>
       <a href="/contact" className="hover:text-white transition">Contact</a>
     </div>
@@ -183,7 +183,7 @@ export default function MVPPage() {
 
     <div className="flex gap-6">
       <a href="/" className="hover:text-white transition">Home</a>
-      <a href="/engagement" className="hover:text-white transition">Engagement</a>
+      <a href="/engagement" className="hover:text-white transition">Quiz Platform</a>
       <a href="/mvp" className="hover:text-white transition">MVP</a>
       <a href="/contact" className="hover:text-white transition">Contact</a>
     </div>

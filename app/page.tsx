@@ -50,7 +50,7 @@ export default function Home() {
     {/* Desktop Menu */}
     <div className="hidden md:flex gap-8 text-sm font-medium text-gray-400 items-center">
       <a href="/" className="hover:text-white transition">Home</a>
-      <a href="/engagement" className="hover:text-white transition">Engagement</a>
+      <a href="/engagement" className="hover:text-white transition">Quiz Platform</a>
       <a href="/mvp" className="hover:text-white transition">MVP</a>
       <a href="/contact" className="hover:text-white transition">Contact</a>
     </div>
@@ -400,7 +400,7 @@ Run live competitions with up to 300 concurrent players, AI-generated or custom 
     {/* Right */}
     <div className="flex gap-6 items-center">
       <a href="/" className="hover:text-white transition">Home</a>
-      <a href="/engagement" className="hover:text-white transition">Engagement</a>
+      <a href="/engagement" className="hover:text-white transition">Quiz Platform</a>
       <a href="/contact" className="hover:text-white transition">Contact</a>
       <a href="/privacy" className="hover:text-white transition">Privacy & Cookies</a>
     </div>
