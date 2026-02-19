@@ -2,12 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-
-const [mobileOpen, setMobileOpen] = useState(false);
-
-
 export default function EngagementPage() {
-
+const [mobileOpen, setMobileOpen] = useState(false);
 useEffect(() => {
   if (typeof window !== "undefined") {
     // @ts-ignore
