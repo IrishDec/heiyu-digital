@@ -53,7 +53,7 @@ export default function MVPPage() {
   {mobileOpen && (
     <div className="md:hidden bg-[#0a0a0a] border-t border-white/5 px-6 py-6 flex flex-col gap-6 text-gray-300 text-lg">
       <a href="/" onClick={() => setMobileOpen(false)} className="hover:text-white transition">Home</a>
-      <a href="/engagement" onClick={() => setMobileOpen(false)} className="hover:text-white transition">Engagement</a>
+      <a href="/engagement" onClick={() => setMobileOpen(false)} className="hover:text-white transition">Quiz Platform</a>
       <a href="/mvp" onClick={() => setMobileOpen(false)} className="hover:text-white transition">MVP</a>
       <a href="/contact" onClick={() => setMobileOpen(false)} className="hover:text-white transition">Contact</a>
     </div>
