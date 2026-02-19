@@ -26,7 +26,8 @@ useEffect(() => {
           HEIYU<span className="text-indigo-500">DIGITAL</span>
         </a>
 
-        <div className="flex gap-8 text-sm font-medium text-gray-400 items-center">
+        <div className="flex gap-4 md:gap-8 text-sm font-medium text-gray-400 items-center overflow-x-auto whitespace-nowrap">
+
           <a href="/" className="hover:text-white transition">Home</a>
           <a href="/engagement" className="text-white">Engagement</a>
           <a href="/mvp" className="hover:text-white transition">MVP</a>

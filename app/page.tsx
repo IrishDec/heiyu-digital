@@ -38,17 +38,17 @@ export default function Home() {
     <main className="min-h-screen bg-[#050505] text-white selection:bg-indigo-500 selection:text-white font-sans">
       {/* NAV */}
       <nav className="fixed top-0 w-full z-50 bg-[#050505]/95 backdrop-blur-md border-b border-white/5">
-        <div className="max-w-6xl mx-auto px-6 py-4 md:h-20 flex flex-col md:flex-row items-center justify-between">
+       <div className="max-w-6xl mx-auto px-6 py-4 md:h-20 flex flex-col md:flex-row items-center justify-between">
+
           <div className="text-xl font-bold tracking-tighter text-white">
             HEIYU<span className="text-indigo-500">DIGITAL</span>
           </div>
 
-          <div className="flex gap-6 md:gap-8 text-sm font-medium text-gray-400 items-center mt-3 md:mt-0">
+         <div className="flex gap-6 md:gap-8 text-sm font-medium text-gray-400 items-center overflow-x-auto no-scrollbar">
+
             <a href="#work" className="hover:text-white transition">Work</a>
              <a href="/Engagement" className="hover:text-white transition">Engagement</a>
             <a href="/mvp" className="hover:text-white transition">MVP</a>
-
-            <a href="#services" className="hover:text-white transition">Services</a>
             <button onClick={() => setShowContact(true)} className="hover:text-white transition">Contact</button>
           </div>
         </div>
