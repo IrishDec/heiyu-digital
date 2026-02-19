@@ -45,7 +45,9 @@ export default function Home() {
 
           <div className="flex gap-6 md:gap-8 text-sm font-medium text-gray-400 items-center mt-3 md:mt-0">
             <a href="#work" className="hover:text-white transition">Work</a>
-            <a href="/engagement" className="text-white">Engagement</a>
+             <a href="/Engagement" className="hover:text-white transition">Engagement</a>
+            <a href="/mvp" className="hover:text-white transition">MVP</a>
+
             <a href="#services" className="hover:text-white transition">Services</a>
             <button onClick={() => setShowContact(true)} className="hover:text-white transition">Contact</button>
           </div>
@@ -68,14 +70,6 @@ export default function Home() {
           Specializing in high performance WebApps, Database Systems, and Legacy Modernization for the real world.
         </p>
 
-        <div className="flex justify-center w-full">
-          <button
-            onClick={() => setShowContact(true)}
-            className="px-10 py-4 bg-white text-black rounded-full font-bold hover:bg-gray-200 transition shadow-[0_0_20px_rgba(255,255,255,0.2)]"
-          >
-            Contact Us
-          </button>
-        </div>
       </section>
 
       {/* ===================== */}
@@ -292,65 +286,104 @@ Run live competitions with up to 300 concurrent players, AI-generated or custom 
 </CaseStudyModal>
 
       
+{/* SERVICES */}
+<section id="services" className="py-16 px-6 bg-[#0a0a0a] border-y border-white/5">
+  <div className="max-w-5xl mx-auto">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-      {/* SERVICES */}
-      <section id="services" className="py-12 md:py-24 px-6 bg-[#0a0a0a] border-y border-white/5 relative overflow-hidden">
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="text-center mb-10 md:mb-16">
-            <h2 className="text-3xl font-bold mb-4">What We Do</h2>
-            <p className="text-gray-300">We don't sell hours. We deliver deployed, working software.</p>
-          </div>
+      {/* Custom Web Apps */}
+      <div className="p-6 md:p-8 rounded-2xl bg-[#111] border border-white/5
+          transition-all duration-300
+          hover:border-indigo-500/40
+          hover:shadow-[0_0_40px_rgba(99,102,241,0.15)]
+          hover:-translate-y-1">
 
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="p-8 rounded-2xl bg-[#111] border border-white/5">
-              <div className="w-12 h-12 bg-indigo-500/10 text-indigo-500 rounded-xl flex items-center justify-center mb-6">🚀</div>
-              <h3 className="text-xl font-bold mb-3">Custom Web Apps</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                Fast, secure Next.js + Supabase applications.
-              </p>
-            </div>
+        <div className="w-12 h-12 bg-indigo-500/10 text-indigo-500 rounded-xl flex items-center justify-center mb-6">🚀</div>
 
-            <div className="p-8 rounded-2xl bg-[#111] border border-white/5">
-              <div className="w-12 h-12 bg-purple-500/10 text-purple-500 rounded-xl flex items-center justify-center mb-6">🗄️</div>
-              <h3 className="text-xl font-bold mb-3">Database Architecture</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                Scalable SQL design with RLS, high-performance queries.
-              </p>
-            </div>
+        <h3 className="text-xl font-bold mb-3">Custom Web Apps</h3>
 
-            <div className="p-8 rounded-2xl bg-[#111] border border-white/5">
-              <div className="w-12 h-12 bg-pink-500/10 text-pink-500 rounded-xl flex items-center justify-center mb-6">⚡</div>
-              <h3 className="text-xl font-bold mb-3">Legacy Modernization</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                Rebuild outdated systems with modern tech.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER */}
-      <footer id="contact" className="py-12 md:py-24 px-6 text-center">
-        <h2 className="text-4xl md:text-5xl font-bold mb-8 tracking-tight">Ready to build?</h2>
-
-        <p className="text-gray-300 mb-10 max-w-xl mx-auto text-lg">
-          Apps. Websites. Database fixes. We’re ready to code.
+        <p className="text-sm text-gray-400 leading-relaxed mb-4">
+          Fast, secure Next.js + Supabase applications built for real users.
         </p>
 
-        <button
-          onClick={() => setShowContact(true)}
-          className="inline-block px-10 py-4 bg-white text-black font-bold rounded-full hover:bg-gray-200 transition shadow-xl"
-        >
-          Get in Touch
-        </button>
+        <ul className="text-xs text-gray-500 space-y-2">
+          <li>• Auth + payments</li>
+          <li>• Admin dashboards</li>
+          <li>• Production deployment</li>
+        </ul>
+      </div>
 
-        <div className="mt-16 md:mt-24 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-400 font-mono">
-          <span>© {new Date().getFullYear()} HeiyuDigital. All rights reserved. Dublin, Ireland.</span>
-          <Link href="/privacy" className="hover:text-white underline decoration-gray-600 underline-offset-4">
-            Privacy & Cookies
-          </Link>
+      {/* Database Architecture */}
+      <div className="p-6 md:p-8 rounded-2xl bg-[#111] border border-white/5
+          transition-all duration-300
+          hover:border-indigo-500/40
+          hover:shadow-[0_0_40px_rgba(99,102,241,0.15)]
+          hover:-translate-y-1">
+
+        <div className="w-12 h-12 bg-purple-500/10 text-purple-500 rounded-xl flex items-center justify-center mb-6">🗄️</div>
+
+        <h3 className="text-xl font-bold mb-3">Database Architecture</h3>
+
+        <p className="text-sm text-gray-400 leading-relaxed mb-4">
+          Scalable SQL systems designed for performance and security.
+        </p>
+
+        <ul className="text-xs text-gray-500 space-y-2">
+          <li>• Supabase RLS policies</li>
+          <li>• Optimized queries</li>
+          <li>• Clean schema design</li>
+        </ul>
+      </div>
+
+      {/* MVP Launch Builds */}
+      <Link href="/mvp" className="block">
+        <div className="p-6 md:p-8 rounded-2xl bg-[#111] border border-white/5
+            transition-all duration-300
+            hover:border-indigo-500/40
+            hover:shadow-[0_0_40px_rgba(99,102,241,0.15)]
+            hover:-translate-y-1 cursor-pointer">
+
+          <div className="w-12 h-12 bg-indigo-500/10 text-indigo-500 rounded-xl flex items-center justify-center mb-6">🚀</div>
+
+          <h3 className="text-xl font-bold mb-3">MVP Launch Builds</h3>
+
+          <p className="text-sm text-gray-400 leading-relaxed mb-4">
+            Turn your idea into a deployed product in 4–8 weeks.
+          </p>
+
+          <ul className="text-xs text-gray-500 space-y-2">
+            <li>• Lean sprint option</li>
+            <li>• Full 8-week builds</li>
+            <li>• Launch-ready deployment</li>
+          </ul>
         </div>
-      </footer>
+      </Link>
+
+    </div>
+  </div>
+</section>
+
+     {/* FOOTER */}
+<footer className="mt-28 border-t border-white/5">
+  <div className="max-w-6xl mx-auto px-6 py-12 text-sm text-gray-500 flex flex-col md:flex-row justify-between items-center gap-6">
+    
+    {/* Left */}
+    <div className="text-center md:text-left">
+      © {new Date().getFullYear()} HEIYU
+      <span className="text-indigo-500">DIGITAL</span>. All rights reserved. Dublin, Ireland.
+    </div>
+
+    {/* Right */}
+    <div className="flex gap-6 items-center">
+      <a href="/" className="hover:text-white transition">Home</a>
+      <a href="/engagement" className="hover:text-white transition">Engagement</a>
+      <a href="/contact" className="hover:text-white transition">Contact</a>
+      <a href="/privacy" className="hover:text-white transition">Privacy & Cookies</a>
+    </div>
+
+  </div>
+</footer>
+
 
       {/* CONTACT MODAL */}
       {showContact && (

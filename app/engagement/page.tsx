@@ -29,6 +29,7 @@ useEffect(() => {
         <div className="flex gap-8 text-sm font-medium text-gray-400 items-center">
           <a href="/" className="hover:text-white transition">Home</a>
           <a href="/engagement" className="text-white">Engagement</a>
+          <a href="/mvp" className="hover:text-white transition">MVP</a>
           <a href="/contact" className="hover:text-white transition">Contact</a>
         </div>
       </div>
@@ -370,6 +371,23 @@ useEffect(() => {
 
   </div>
 </div>
+{/* FOOTER */}
+<footer className="mt-28 border-t border-white/5">
+  <div className="max-w-6xl mx-auto px-6 py-10 text-sm text-gray-500 flex flex-col md:flex-row justify-between items-center gap-4">
+    
+    <div>
+      © {new Date().getFullYear()} HEIYU<span className="text-indigo-500">DIGITAL</span>
+    </div>
+
+    <div className="flex gap-6">
+      <a href="/" className="hover:text-white transition">Home</a>
+      <a href="/engagement" className="hover:text-white transition">Engagement</a>
+      <a href="/mvp" className="hover:text-white transition">MVP</a>
+      <a href="/contact" className="hover:text-white transition">Contact</a>
+    </div>
+
+  </div>
+</footer>
 
    </main>
   </>
