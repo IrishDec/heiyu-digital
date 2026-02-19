@@ -14,6 +14,8 @@ export default function Home() {
   const [showContact, setShowContact] = useState(false);
   const [openBudgetCase, setOpenBudgetCase] = useState(false);
   const [openQuizCase, setOpenQuizCase] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
 
 
   const budgetImages = [
@@ -36,23 +38,45 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-[#050505] text-white selection:bg-indigo-500 selection:text-white font-sans">
-      {/* NAV */}
-      <nav className="fixed top-0 w-full z-50 bg-[#050505]/95 backdrop-blur-md border-b border-white/5">
-       <div className="max-w-6xl mx-auto px-6 py-4 md:h-20 flex flex-col md:flex-row items-center justify-between">
+     {/* NAV */}
+<nav className="fixed top-0 w-full z-50 bg-[#050505]/95 backdrop-blur-md border-b border-white/5">
+  <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
 
-          <div className="text-xl font-bold tracking-tighter text-white">
-            HEIYU<span className="text-indigo-500">DIGITAL</span>
-          </div>
+    {/* Logo */}
+    <a href="/" className="text-xl font-bold tracking-tighter text-white">
+      HEIYU<span className="text-indigo-500">DIGITAL</span>
+    </a>
 
-         <div className="flex gap-6 md:gap-8 text-sm font-medium text-gray-400 items-center overflow-x-auto no-scrollbar">
+    {/* Desktop Menu */}
+    <div className="hidden md:flex gap-8 text-sm font-medium text-gray-400 items-center">
+      <a href="/" className="hover:text-white transition">Home</a>
+      <a href="/engagement" className="hover:text-white transition">Engagement</a>
+      <a href="/mvp" className="hover:text-white transition">MVP</a>
+      <a href="/contact" className="hover:text-white transition">Contact</a>
+    </div>
 
-            <a href="#work" className="hover:text-white transition">Work</a>
-             <a href="/Engagement" className="hover:text-white transition">Engagement</a>
-            <a href="/mvp" className="hover:text-white transition">MVP</a>
-            <button onClick={() => setShowContact(true)} className="hover:text-white transition">Contact</button>
-          </div>
-        </div>
-      </nav>
+    {/* Mobile Burger */}
+    <button
+      onClick={() => setMobileOpen(!mobileOpen)}
+      className="md:hidden flex flex-col gap-1"
+    >
+      <span className="w-6 h-[2px] bg-white"></span>
+      <span className="w-6 h-[2px] bg-white"></span>
+      <span className="w-6 h-[2px] bg-white"></span>
+    </button>
+  </div>
+
+  {/* Mobile Menu */}
+  {mobileOpen && (
+    <div className="md:hidden bg-[#0a0a0a] border-t border-white/5 px-6 py-6 flex flex-col gap-6 text-gray-300 text-lg">
+      <a href="/" onClick={() => setMobileOpen(false)} className="hover:text-white transition">Home</a>
+      <a href="/engagement" onClick={() => setMobileOpen(false)} className="hover:text-white transition">Engagement</a>
+      <a href="/mvp" onClick={() => setMobileOpen(false)} className="hover:text-white transition">MVP</a>
+      <a href="/contact" onClick={() => setMobileOpen(false)} className="hover:text-white transition">Contact</a>
+    </div>
+  )}
+</nav>
+
 
       {/* HERO */}
       <section className="pt-44 pb-12 md:pt-48 md:pb-24 px-6 max-w-5xl mx-auto flex flex-col items-center text-center">
