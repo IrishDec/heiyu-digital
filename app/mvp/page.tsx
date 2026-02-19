@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
+const [mobileOpen, setMobileOpen] = useState(false);
+
 
 export default function MVPPage() {
 
@@ -18,21 +21,45 @@ export default function MVPPage() {
 
   return (
     <>
-      {/* NAV */}
-      <nav className="fixed top-0 w-full z-50 bg-[#050505]/95 backdrop-blur-md border-b border-white/5">
-        <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-          <a href="/" className="text-xl font-bold tracking-tighter text-white">
-            HEIYU<span className="text-indigo-500">DIGITAL</span>
-          </a>
+     {/* NAV */}
+<nav className="fixed top-0 w-full z-50 bg-[#050505]/95 backdrop-blur-md border-b border-white/5">
+  <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
 
-          <div className="flex gap-4 md:gap-8 text-sm font-medium text-gray-400 items-center overflow-x-auto whitespace-nowrap">
+    {/* Logo */}
+    <a href="/" className="text-xl font-bold tracking-tighter text-white">
+      HEIYU<span className="text-indigo-500">DIGITAL</span>
+    </a>
 
-            <a href="/" className="hover:text-white transition">Home</a>
-            <a href="/engagement" className="hover:text-white transition">Engagement</a>
-            <a href="/contact" className="hover:text-white transition">Contact</a>
-          </div>
-        </div>
-      </nav>
+    {/* Desktop Menu */}
+    <div className="hidden md:flex gap-8 text-sm font-medium text-gray-400 items-center">
+      <a href="/" className="hover:text-white transition">Home</a>
+      <a href="/engagement" className="hover:text-white transition">Engagement</a>
+      <a href="/mvp" className="hover:text-white transition">MVP</a>
+      <a href="/contact" className="hover:text-white transition">Contact</a>
+    </div>
+
+    {/* Mobile Burger */}
+    <button
+      onClick={() => setMobileOpen(!mobileOpen)}
+      className="md:hidden flex flex-col gap-1"
+    >
+      <span className="w-6 h-[2px] bg-white"></span>
+      <span className="w-6 h-[2px] bg-white"></span>
+      <span className="w-6 h-[2px] bg-white"></span>
+    </button>
+  </div>
+
+  {/* Mobile Menu */}
+  {mobileOpen && (
+    <div className="md:hidden bg-[#0a0a0a] border-t border-white/5 px-6 py-6 flex flex-col gap-6 text-gray-300 text-lg">
+      <a href="/" onClick={() => setMobileOpen(false)} className="hover:text-white transition">Home</a>
+      <a href="/engagement" onClick={() => setMobileOpen(false)} className="hover:text-white transition">Engagement</a>
+      <a href="/mvp" onClick={() => setMobileOpen(false)} className="hover:text-white transition">MVP</a>
+      <a href="/contact" onClick={() => setMobileOpen(false)} className="hover:text-white transition">Contact</a>
+    </div>
+  )}
+</nav>
+
 
       {/* PAGE */}
       <main className="bg-[#050505] text-white pt-32 pb-24">
