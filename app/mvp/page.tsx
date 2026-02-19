@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from "react";
 
-const [mobileOpen, setMobileOpen] = useState(false);
-
-
 export default function MVPPage() {
+
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -18,6 +17,7 @@ export default function MVPPage() {
       }
     }
   }, []);
+
 
   return (
     <>
