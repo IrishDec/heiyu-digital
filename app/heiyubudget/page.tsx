@@ -12,11 +12,19 @@ import {
   X,
 } from "lucide-react";
 
+type DemoResult = {
+  type: "Income" | "Expense";
+  amount: string;
+  category: string;
+};
+
+type GlowState = Record<string, { x: number; y: number; active: boolean }>;
+
 function GlassShell({ children }: { children: ReactNode }) {
   return (
-    <main className="min-h-screen bg-[#050505] text-white overflow-x-hidden relative">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-32 -left-24 h-[22rem] w-[22rem] rounded-full bg-[#39FF14]/8 blur-[120px]" />
+    <main className="relative min-h-screen overflow-x-hidden bg-[#050505] text-white">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-24 -top-32 h-[22rem] w-[22rem] rounded-full bg-[#39FF14]/8 blur-[120px]" />
         <div className="absolute bottom-[-6rem] right-[-4rem] h-[22rem] w-[22rem] rounded-full bg-fuchsia-500/10 blur-[130px]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(57,255,20,0.06),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(236,72,153,0.08),transparent_26%)]" />
       </div>
@@ -28,11 +36,11 @@ function GlassShell({ children }: { children: ReactNode }) {
 function AppHeader({ onMenu }: { onMenu: () => void }) {
   return (
     <header className="sticky top-3 z-40 px-4 pt-4 sm:px-6">
-      <div className="mx-auto max-w-7xl rounded-full border border-[#ffffff10] bg-white/[0.03] backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,0.35)] px-3 py-3 sm:px-5">
+      <div className="mx-auto max-w-7xl rounded-full border border-[#ffffff10] bg-white/[0.03] px-3 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:px-5">
         <div className="flex items-center justify-between gap-3">
           <a
             href="/"
-            className="inline-flex h-11 items-center gap-2 rounded-full border border-[#ffffff10] bg-white/[0.03] px-4 text-sm text-white/80 hover:text-white transition"
+            className="inline-flex h-11 items-center gap-2 rounded-full border border-[#ffffff10] bg-white/[0.03] px-4 text-sm text-white/80 transition hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             <span className="hidden xs:inline">Back</span>
@@ -42,7 +50,7 @@ function AppHeader({ onMenu }: { onMenu: () => void }) {
             <div className="truncate text-[11px] uppercase tracking-[0.26em] text-white/45">
               Heiyu Digital Product
             </div>
-            <div className="truncate text-sm font-medium tracking-[0.18em] uppercase text-white/80">
+            <div className="truncate text-sm font-medium uppercase tracking-[0.18em] text-white/80">
               Heiyu Budget
             </div>
           </div>
@@ -51,6 +59,7 @@ function AppHeader({ onMenu }: { onMenu: () => void }) {
             onClick={onMenu}
             className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#ffffff10] bg-white/[0.03] text-white/80"
             aria-label="Open menu"
+            type="button"
           >
             <Menu className="h-5 w-5" />
           </button>
@@ -77,8 +86,10 @@ function MobileMenu({
       )}
 
       <div
-        className={`fixed right-4 top-4 z-50 w-[min(88vw,22rem)] rounded-[1.75rem] border border-[#ffffff10] bg-[#0b0b0b]/95 p-5 backdrop-blur-2xl shadow-[0_20px_80px_rgba(0,0,0,0.45)] transition-all duration-300 ${
-          open ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-4 opacity-0"
+        className={`fixed right-4 top-4 z-50 w-[min(88vw,22rem)] rounded-[1.75rem] border border-[#ffffff10] bg-[#0b0b0b]/95 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl transition-all duration-300 ${
+          open
+            ? "translate-y-0 opacity-100"
+            : "pointer-events-none -translate-y-4 opacity-0"
         }`}
       >
         <div className="mb-5 flex items-center justify-between">
@@ -92,6 +103,7 @@ function MobileMenu({
           <button
             onClick={onClose}
             className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#ffffff10] bg-white/[0.03] text-white/80"
+            type="button"
           >
             <X className="h-4 w-4" />
           </button>
@@ -138,18 +150,12 @@ function MobileMenu({
 
 export default function HeiyuBudgetPage() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [glow, setGlow] = useState<{
-    [key: string]: { x: number; y: number; active: boolean };
-  }>({});
+  const [glow, setGlow] = useState<GlowState>({});
   const [isTouch, setIsTouch] = useState(false);
 
   const [listening, setListening] = useState(false);
   const [spokenText, setSpokenText] = useState("expense 25 fuel");
-  const [demoResult, setDemoResult] = useState<{
-    type: "Income" | "Expense";
-    amount: string;
-    category: string;
-  }>({
+  const [demoResult, setDemoResult] = useState<DemoResult>({
     type: "Expense",
     amount: "€25.00",
     category: "Fuel",
@@ -209,7 +215,7 @@ export default function HeiyuBudgetPage() {
     },
   ];
 
-  const parseVoiceDemo = (text: string) => {
+  const parseVoiceDemo = (text: string): DemoResult => {
     const raw = text.trim();
     const lower = raw.toLowerCase();
 
@@ -256,9 +262,31 @@ export default function HeiyuBudgetPage() {
   const handleMicClick = () => {
     if (typeof window === "undefined") return;
 
+    const win = window as Window & {
+      SpeechRecognition?: new () => {
+        lang: string;
+        interimResults: boolean;
+        maxAlternatives: number;
+        onstart: null | (() => void);
+        onresult: null | ((event: any) => void);
+        onerror: null | (() => void);
+        onend: null | (() => void);
+        start: () => void;
+      };
+      webkitSpeechRecognition?: new () => {
+        lang: string;
+        interimResults: boolean;
+        maxAlternatives: number;
+        onstart: null | (() => void);
+        onresult: null | ((event: any) => void);
+        onerror: null | (() => void);
+        onend: null | (() => void);
+        start: () => void;
+      };
+    };
+
     const SpeechRecognitionAPI =
-      (window as any).SpeechRecognition ||
-      (window as any).webkitSpeechRecognition;
+      win.SpeechRecognition || win.webkitSpeechRecognition;
 
     if (!SpeechRecognitionAPI) {
       alert("Speech recognition is not supported on this browser.");
@@ -275,7 +303,7 @@ export default function HeiyuBudgetPage() {
     };
 
     recognition.onresult = (event: any) => {
-      const transcript = event.results?.[0]?.[0]?.transcript?.trim() || "";
+      const transcript = event?.results?.[0]?.[0]?.transcript?.trim() || "";
       if (!transcript) return;
 
       setSpokenText(transcript);
@@ -303,7 +331,7 @@ export default function HeiyuBudgetPage() {
         className="relative mx-auto max-w-7xl px-4 pb-36 pt-8 sm:px-6 lg:px-10"
       >
         <div className="pt-6 text-center sm:pt-10">
-          <h1 className="mx-auto max-w-5xl text-[2.6rem] font-semibold tracking-[-0.07em] leading-[0.95] text-white sm:text-6xl lg:text-[6.25rem]">
+          <h1 className="mx-auto max-w-5xl text-[2.6rem] font-semibold leading-[0.95] tracking-[-0.07em] text-white sm:text-6xl lg:text-[6.25rem]">
             Finance for the <span className="text-white/90">Self-Made.</span>
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-white/55 sm:text-lg sm:leading-8">
@@ -313,7 +341,7 @@ export default function HeiyuBudgetPage() {
         </div>
 
         <div className="mt-10 grid gap-4 lg:mt-14 lg:grid-cols-12 lg:gap-6">
-          <div className="lg:col-span-8 rounded-[1.75rem] sm:rounded-[2rem] border border-[#ffffff10] bg-white/[0.05] backdrop-blur-2xl p-5 sm:p-7 lg:p-8 shadow-[0_30px_120px_rgba(0,0,0,0.45)] relative overflow-hidden">
+          <div className="relative overflow-hidden rounded-[1.75rem] border border-[#ffffff10] bg-white/[0.05] p-5 shadow-[0_30px_120px_rgba(0,0,0,0.45)] backdrop-blur-2xl sm:rounded-[2rem] sm:p-7 lg:col-span-8 lg:p-8">
             <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.04),transparent_35%,transparent_65%,rgba(255,255,255,0.02))]" />
 
             <div className="relative grid gap-5 lg:grid-cols-[minmax(0,1.15fr)_18rem] lg:items-center">
@@ -322,7 +350,7 @@ export default function HeiyuBudgetPage() {
                   The Magic Moment
                 </p>
 
-                <h2 className="mt-3 text-[2.35rem] leading-[0.95] font-semibold tracking-[-0.06em] text-white sm:text-4xl lg:text-[3.35rem]">
+                <h2 className="mt-3 text-[2.35rem] font-semibold leading-[0.95] tracking-[-0.06em] text-white sm:text-4xl lg:text-[3.35rem]">
                   Say it. It’s logged.
                 </h2>
 
@@ -367,8 +395,8 @@ export default function HeiyuBudgetPage() {
                 </div>
               </div>
 
-              <div className="w-full lg:w-[18rem] rounded-[1.5rem] sm:rounded-[2rem] border border-[#ffffff10] bg-[#0b0b0b]/70 backdrop-blur-2xl p-4 sm:p-5 shadow-[0_20px_70px_rgba(0,0,0,0.45)] justify-self-center lg:justify-self-end">
-                <div className="rounded-[1.25rem] sm:rounded-[1.5rem] border border-[#ffffff10] bg-white/[0.03] p-4 sm:p-5">
+              <div className="justify-self-center rounded-[1.5rem] border border-[#ffffff10] bg-[#0b0b0b]/70 p-4 shadow-[0_20px_70px_rgba(0,0,0,0.45)] backdrop-blur-2xl sm:rounded-[2rem] sm:p-5 lg:w-[18rem] lg:justify-self-end">
+                <div className="rounded-[1.25rem] border border-[#ffffff10] bg-white/[0.03] p-4 sm:rounded-[1.5rem] sm:p-5">
                   <p className="text-[11px] uppercase tracking-[0.22em] text-white/40">
                     Live Capture
                   </p>
@@ -383,6 +411,7 @@ export default function HeiyuBudgetPage() {
                     />
                     <button
                       onClick={handleMicClick}
+                      type="button"
                       className={`relative flex h-24 w-24 items-center justify-center rounded-full border text-white shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_30px_60px_rgba(0,0,0,0.45)] sm:h-28 sm:w-28 ${
                         listening
                           ? "border-pink-300/30 bg-pink-400/10"
@@ -400,7 +429,7 @@ export default function HeiyuBudgetPage() {
                     </button>
                   </div>
 
-                  <div className="mt-5 rounded-2xl bg-[linear-gradient(90deg,rgba(34,211,238,0.18),rgba(217,70,239,0.18))] border border-[#ffffff10] px-4 py-4 text-center text-base font-medium tracking-[-0.03em] sm:mt-6 sm:px-5 sm:text-lg">
+                  <div className="mt-5 rounded-2xl border border-[#ffffff10] bg-[linear-gradient(90deg,rgba(34,211,238,0.18),rgba(217,70,239,0.18))] px-4 py-4 text-center text-base font-medium tracking-[-0.03em] sm:mt-6 sm:px-5 sm:text-lg">
                     {listening ? "Listening..." : "Tap to Speak"}
                   </div>
 
@@ -408,7 +437,7 @@ export default function HeiyuBudgetPage() {
                     <div className="text-[11px] uppercase tracking-[0.22em] text-white/40">
                       You said
                     </div>
-                    <div className="mt-2 text-sm font-medium text-white/85 leading-6">
+                    <div className="mt-2 text-sm font-medium leading-6 text-white/85">
                       “{spokenText}”
                     </div>
 
@@ -450,8 +479,8 @@ export default function HeiyuBudgetPage() {
             </div>
           </div>
 
-          <div className="lg:col-span-4 flex flex-col gap-4 sm:gap-6">
-            <div className="rounded-[1.75rem] sm:rounded-[2rem] border border-[#ffffff10] bg-white/[0.05] backdrop-blur-2xl p-5 sm:p-6 shadow-[0_20px_80px_rgba(0,0,0,0.4)]">
+          <div className="flex flex-col gap-4 sm:gap-6 lg:col-span-4">
+            <div className="rounded-[1.75rem] border border-[#ffffff10] bg-white/[0.05] p-5 shadow-[0_20px_80px_rgba(0,0,0,0.4)] backdrop-blur-2xl sm:rounded-[2rem] sm:p-6">
               <p className="text-[11px] uppercase tracking-[0.24em] text-white/45">
                 Built for speed
               </p>
@@ -460,7 +489,7 @@ export default function HeiyuBudgetPage() {
                   <div className="text-xl font-semibold tracking-[-0.04em] sm:text-2xl">
                     Voice-first
                   </div>
-                  <div className="mt-2 text-sm text-white/50 leading-6">
+                  <div className="mt-2 text-sm leading-6 text-white/50">
                     No slow forms. No spreadsheet drag.
                   </div>
                 </div>
@@ -469,14 +498,14 @@ export default function HeiyuBudgetPage() {
                   <div className="text-xl font-semibold tracking-[-0.04em] sm:text-2xl">
                     Mobile-native feel
                   </div>
-                  <div className="mt-2 text-sm text-white/50 leading-6">
+                  <div className="mt-2 text-sm leading-6 text-white/50">
                     Designed for real-world use while moving.
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="rounded-[1.75rem] sm:rounded-[2rem] border border-[#ffffff10] bg-white/[0.05] backdrop-blur-2xl p-5 sm:p-6 shadow-[0_20px_80px_rgba(0,0,0,0.4)]">
+            <div className="rounded-[1.75rem] border border-[#ffffff10] bg-white/[0.05] p-5 shadow-[0_20px_80px_rgba(0,0,0,0.4)] backdrop-blur-2xl sm:rounded-[2rem] sm:p-6">
               <p className="text-[11px] uppercase tracking-[0.24em] text-white/45">
                 Positioning
               </p>
@@ -523,10 +552,8 @@ export default function HeiyuBudgetPage() {
                       ? undefined
                       : (e) => {
                           const rect = e.currentTarget.getBoundingClientRect();
-                          const x =
-                            ((e.clientX - rect.left) / rect.width) * 100;
-                          const y =
-                            ((e.clientY - rect.top) / rect.height) * 100;
+                          const x = ((e.clientX - rect.left) / rect.width) * 100;
+                          const y = ((e.clientY - rect.top) / rect.height) * 100;
                           setGlow((prev) => ({
                             ...prev,
                             [item.title]: { x, y, active: true },
@@ -546,17 +573,15 @@ export default function HeiyuBudgetPage() {
                           }));
                         }
                   }
-                  className="rounded-[1.75rem] sm:rounded-[2rem] border border-[#ffffff10] bg-white/[0.05] backdrop-blur-2xl p-5 sm:p-6 shadow-[0_18px_60px_rgba(0,0,0,0.35)] relative overflow-hidden"
+                  className="relative overflow-hidden rounded-[1.75rem] border border-[#ffffff10] bg-white/[0.05] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-2xl sm:rounded-[2rem] sm:p-6"
                 >
                   <div
-                    className="absolute inset-0 transition-opacity duration-300 pointer-events-none"
+                    className="pointer-events-none absolute inset-0 transition-opacity duration-300"
                     style={{ opacity, background }}
                   />
                   <div
                     className={`absolute inset-x-0 top-0 h-px ${
-                      idx % 2 === 0
-                        ? "bg-[#39FF14]/35"
-                        : "bg-fuchsia-300/30"
+                      idx % 2 === 0 ? "bg-[#39FF14]/35" : "bg-fuchsia-300/30"
                     }`}
                   />
                   <div className="relative z-10">
@@ -577,7 +602,7 @@ export default function HeiyuBudgetPage() {
         </section>
 
         <section className="mt-8">
-          <div className="rounded-[1.75rem] sm:rounded-[2rem] border border-[#ffffff10] bg-white/[0.05] backdrop-blur-2xl p-5 sm:p-8 shadow-[0_20px_80px_rgba(0,0,0,0.4)]">
+          <div className="rounded-[1.75rem] border border-[#ffffff10] bg-white/[0.05] p-5 shadow-[0_20px_80px_rgba(0,0,0,0.4)] backdrop-blur-2xl sm:rounded-[2rem] sm:p-8">
             <p className="text-[11px] uppercase tracking-[0.24em] text-white/45">
               Why it lands
             </p>
@@ -586,7 +611,7 @@ export default function HeiyuBudgetPage() {
                 <div className="text-2xl font-semibold tracking-[-0.05em] sm:text-3xl">
                   Fast
                 </div>
-                <p className="mt-3 text-sm text-white/50 leading-6">
+                <p className="mt-3 text-sm leading-6 text-white/50">
                   Built to be used in the gaps between real work, not after it.
                 </p>
               </div>
@@ -594,7 +619,7 @@ export default function HeiyuBudgetPage() {
                 <div className="text-2xl font-semibold tracking-[-0.05em] sm:text-3xl">
                   Clear
                 </div>
-                <p className="mt-3 text-sm text-white/50 leading-6">
+                <p className="mt-3 text-sm leading-6 text-white/50">
                   Income, expense, and history at a glance with no noise.
                 </p>
               </div>
@@ -602,7 +627,7 @@ export default function HeiyuBudgetPage() {
                 <div className="text-2xl font-semibold tracking-[-0.05em] sm:text-3xl">
                   Premium
                 </div>
-                <p className="mt-3 text-sm text-white/50 leading-6">
+                <p className="mt-3 text-sm leading-6 text-white/50">
                   A product feel that respects the user and the time they are
                   giving it.
                 </p>
@@ -615,7 +640,7 @@ export default function HeiyuBudgetPage() {
           <p className="text-[11px] uppercase tracking-[0.26em] text-white/40">
             Get started
           </p>
-          <h2 className="mx-auto mt-4 max-w-3xl text-3xl font-semibold tracking-[-0.06em] leading-tight sm:mt-5 sm:text-5xl md:text-6xl">
+          <h2 className="mx-auto mt-4 max-w-3xl text-3xl font-semibold leading-tight tracking-[-0.06em] sm:mt-5 sm:text-5xl md:text-6xl">
             Clean, dark, and built to feel like it already belongs in your
             pocket.
           </h2>
@@ -624,19 +649,19 @@ export default function HeiyuBudgetPage() {
               href="https://heiyubudget.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex w-full max-w-sm items-center justify-center rounded-full border border-[#ffffff10] bg-white px-8 py-4 text-sm font-semibold uppercase tracking-[0.08em] text-[#050505] shadow-[0_12px_40px_rgba(255,255,255,0.08)] hover:scale-[1.02] transition-transform sm:w-auto"
+              className="inline-flex w-full max-w-sm items-center justify-center rounded-full border border-[#ffffff10] bg-white px-8 py-4 text-sm font-semibold uppercase tracking-[0.08em] text-[#050505] shadow-[0_12px_40px_rgba(255,255,255,0.08)] transition-transform hover:scale-[1.02] sm:w-auto"
             >
               Start Tracking
             </a>
           </div>
         </section>
 
-        <section className="pt-8 pb-28" id="roadmap">
-          <div className="text-center mb-8 sm:mb-10">
+        <section className="pb-28 pt-8" id="roadmap">
+          <div className="mb-8 text-center sm:mb-10">
             <p className="text-[11px] uppercase tracking-[0.26em] text-white/40">
               Roadmap
             </p>
-            <h2 className="mx-auto mt-3 max-w-4xl text-3xl font-semibold tracking-[-0.06em] leading-tight sm:text-5xl md:text-6xl">
+            <h2 className="mx-auto mt-3 max-w-4xl text-3xl font-semibold leading-tight tracking-[-0.06em] sm:text-5xl md:text-6xl">
               The Future of Self-Made Finance.
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-white/55 sm:text-base sm:leading-8">
@@ -649,13 +674,13 @@ export default function HeiyuBudgetPage() {
             {features.map((feature, idx) => (
               <div
                 key={feature.title}
-                className={`${
+                className={`relative overflow-hidden rounded-[1.75rem] border border-[#ffffff10] bg-white/[0.05] p-5 shadow-[0_20px_80px_rgba(0,0,0,0.4)] backdrop-blur-2xl sm:rounded-[2rem] sm:p-6 lg:p-7 ${
                   feature.large ? "lg:col-span-2 lg:row-span-2" : ""
-                } rounded-[1.75rem] sm:rounded-[2rem] border border-[#ffffff10] bg-white/[0.05] backdrop-blur-2xl p-5 sm:p-6 lg:p-7 shadow-[0_20px_80px_rgba(0,0,0,0.4)] relative overflow-hidden`}
+                }`}
               >
                 <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.04),transparent_35%,transparent_65%,rgba(255,255,255,0.02))]" />
                 <div className="absolute inset-x-0 top-0 h-px bg-[#39FF14]/35" />
-                <div className="relative z-10 h-full flex flex-col">
+                <div className="relative z-10 flex h-full flex-col">
                   <div className="flex items-start justify-between gap-3">
                     <span className="inline-flex items-center rounded-full border border-[#39FF14]/25 bg-[#39FF14]/8 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#39FF14]">
                       Coming Soon
@@ -690,7 +715,7 @@ export default function HeiyuBudgetPage() {
           </div>
 
           <div className="mt-6">
-            <div className="rounded-[1.4rem] border border-[#ffffff10] bg-[#0b0b0b]/90 backdrop-blur-2xl p-3 shadow-[0_20px_80px_rgba(0,0,0,0.45)]">
+            <div className="rounded-[1.4rem] border border-[#ffffff10] bg-[#0b0b0b]/90 p-3 shadow-[0_20px_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl">
               <div className="flex items-center justify-between gap-3 rounded-[1rem] bg-white/[0.04] px-4 py-4">
                 <div>
                   <div className="text-[11px] uppercase tracking-[0.22em] text-white/40">
@@ -704,7 +729,7 @@ export default function HeiyuBudgetPage() {
                   href="https://heiyubudget.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex rounded-full bg-white px-5 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#050505] hover:scale-[1.02] transition-transform"
+                  className="inline-flex rounded-full bg-white px-5 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#050505] transition-transform hover:scale-[1.02]"
                 >
                   Start Tracking
                 </a>
