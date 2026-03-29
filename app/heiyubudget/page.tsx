@@ -210,7 +210,7 @@ export default function HeiyuBudgetPage() {
     },
     {
       title: "Tax-Ready Export",
-      desc: "The Accountant-Killer. One-click ROS-compatible exports for your year-end.",
+      desc: "For your Accountant. One-click ROS-compatible exports for your year-end.",
       icon: <Download className="h-6 w-6" />,
     },
   ];
@@ -737,6 +737,23 @@ export default function HeiyuBudgetPage() {
             </div>
           </div>
         </section>
+        {/* FOOTER */}
+<footer className="mt-20 border-t border-white/5">
+  <div className="max-w-6xl mx-auto px-6 py-12 text-sm text-gray-500 flex flex-col md:flex-row justify-between items-center gap-6">
+    <div className="text-center md:text-left">
+      © {new Date().getFullYear()} HEIYU
+      <span className="text-indigo-500">DIGITAL</span>. All rights reserved. Dublin, Ireland.
+    </div>
+
+    <div className="flex flex-wrap justify-center gap-6 items-center">
+      <a href="/" className="hover:text-white transition">Home</a>
+      <a href="/heiyubudget" className="hover:text-white transition">Heiyu Budget</a>
+      <a href="/engagement" className="hover:text-white transition">Quiz Platform</a>
+      <a href="/contact" className="hover:text-white transition">Contact</a>
+      <a href="/privacy" className="hover:text-white transition">Privacy & Cookies</a>
+    </div>
+  </div>
+</footer>
       </section>
     </GlassShell>
   );
