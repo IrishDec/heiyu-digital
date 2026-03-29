@@ -135,7 +135,13 @@ export default function Home() {
                   <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div> 
                 </div>
               </div>
-
+              <a
+              href="/heiyubudget"
+              className="mt-4 text-white font-bold border-b border-indigo-500 pb-1 self-start hover:text-indigo-400 transition"
+              >
+             Product Overview →
+              </a>
+              <br></br>
               <a
                 href="https://heiyubudget.com"
                 target="_blank"
@@ -143,7 +149,7 @@ export default function Home() {
               >
                 View Live Project →
               </a>
-
+              
               <button
                 onClick={() => setOpenBudgetCase(true)}
                 className="mt-4 text-white font-bold border-b border-indigo-500 pb-1 self-start hover:text-indigo-400 transition"
@@ -240,38 +246,51 @@ Run live competitions with up to 300 concurrent players, AI-generated or custom 
       {/*      CASE STUDY MODAL           */}
       {/* =============================== */}
 
-      <CaseStudyModal
-        open={openBudgetCase}
-        onClose={() => setOpenBudgetCase(false)}
-        title="HeiyuBudget — Case Study"
-      >
-        <div className="space-y-8">
-          <section className="space-y-2">
-            <h3 className="text-xl font-semibold">The Problem</h3>
-            <p className="text-gray-300">
-              Taxi drivers needed a fast, hands-free way to log income and expenses.
-              Existing tools were slow and not built for real workflows.
-            </p>
-          </section>
+     <CaseStudyModal
+  open={openBudgetCase}
+  onClose={() => setOpenBudgetCase(false)}
+  title="HeiyuBudget — Case Study"
+>
+  <div className="space-y-8">
+    <section className="space-y-2">
+      <h3 className="text-xl font-semibold">The Problem</h3>
+      <p className="text-gray-300">
+        Self-employed workers and small operators needed a faster way to log income
+        and expenses. Most tools felt slow, cluttered, or built for office workflows
+        instead of real life.
+      </p>
+    </section>
 
-          <section className="space-y-2">
-            <h3 className="text-xl font-semibold">The Solution</h3>
-            <p className="text-gray-300">
-              A mobile-first budgeting tool with AI voice input,
-              and smart timezone/date logic.
-            </p>
-          </section>
+    <section className="space-y-2">
+      <h3 className="text-xl font-semibold">The Solution</h3>
+      <p className="text-gray-300">
+       A mobile-first money management tool with voice and text entry, fast category
+       handling, smart date logic, and support for tax weeks not just in Ireland
+       but for any country in the world.
+     </p>
+    </section>
 
+    <section className="space-y-2">
+      <h3 className="text-xl font-semibold">Why It’s Impressive</h3>
+      <ul className="list-disc list-inside text-gray-300 space-y-1">
+        <li>Voice-first logging built for real-world speed</li>
+        <li>Supabase + RLS secure data model</li>
+        <li>Automatic daily, weekly, monthly, and yearly rollovers</li>
+        <li>Mobile-first UI designed for use on the move</li>
+      </ul>
+    </section>
           <section className="space-y-2">
-            <h3 className="text-xl font-semibold">Why It’s Impressive</h3>
-            <ul className="list-disc list-inside text-gray-300 space-y-1">
-              <li>Initial version built in 48 hours</li>
-              <li>Supabase + RLS secure data model</li>
-              <li>Automatic daily/weekly/monthly rollovers</li>
-            </ul>
-          </section>
-        </div>
-      </CaseStudyModal>
+         <h3 className="text-xl font-semibold">What’s Next</h3>
+         <p className="text-gray-300">
+           Glass payments are coming soon, along with many other powerful features.
+          Check out the roadmap.
+           </p>
+         <a href="/heiyubudget#roadmap" className="inline-block text-white font-bold border-b border-indigo-500 pb-1 hover:text-indigo-400 transition">
+          View Roadmap →
+            </a>
+           </section>
+              </div>
+             </CaseStudyModal>
 
 <CaseStudyModal
   open={openQuizCase}

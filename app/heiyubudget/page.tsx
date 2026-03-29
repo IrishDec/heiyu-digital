@@ -364,7 +364,7 @@ export default function HeiyuBudgetPage() {
                     Try saying
                   </p>
                   <div className="mt-2 text-base font-medium text-white/85 sm:text-lg">
-                    “income 60 cash” or “expense 25 fuel”
+                    “income 60 cash” or “expense 25 fuel” Or another figure! 
                   </div>
                 </div>
 
