@@ -1,16 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import {
-  ArrowLeft,
-  Camera,
-  CreditCard,
-  Download,
-  FileText,
-  Menu,
-  Package,
-  X,
-} from "lucide-react";
+import { Camera, CreditCard, Download, FileText, Package } from "lucide-react";
 
 type DemoResult = {
   type: "Income" | "Expense";
@@ -22,10 +13,10 @@ type GlowState = Record<string, { x: number; y: number; active: boolean }>;
 
 function GlassShell({ children }: { children: ReactNode }) {
   return (
-    <main className="relative min-h-screen overflow-x-hidden bg-[#050505] text-white">
-      <div className="pointer-events-none absolute inset-0">
+    <main className="relative min-h-screen bg-[#050505] text-white">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -left-24 -top-32 h-[22rem] w-[22rem] rounded-full bg-[#39FF14]/8 blur-[120px]" />
-        <div className="absolute bottom-[-6rem] right-[-4rem] h-[22rem] w-[22rem] rounded-full bg-fuchsia-500/10 blur-[130px]" />
+        <div className="absolute -right-4 bottom-0 h-[22rem] w-[22rem] rounded-full bg-fuchsia-500/10 blur-[130px]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(57,255,20,0.06),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(236,72,153,0.08),transparent_26%)]" />
       </div>
       {children}
@@ -35,37 +26,42 @@ function GlassShell({ children }: { children: ReactNode }) {
 
 function AppHeader({ onMenu }: { onMenu: () => void }) {
   return (
-    <header className="sticky top-3 z-40 px-4 pt-4 sm:px-6">
-      <div className="mx-auto max-w-7xl rounded-full border border-[#ffffff10] bg-white/[0.03] px-3 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:px-5">
-        <div className="flex items-center justify-between gap-3">
-          <a
-            href="/"
-            className="inline-flex h-11 items-center gap-2 rounded-full border border-[#ffffff10] bg-white/[0.03] px-4 text-sm text-white/80 transition hover:text-white"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span className="hidden xs:inline">Back</span>
+    <nav className="fixed top-0 w-full z-50 bg-[#050505]/95 backdrop-blur-md border-b border-white/5">
+      <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+        <a href="/" className="text-xl font-bold tracking-tighter text-white">
+          HEIYU<span className="text-indigo-500">DIGITAL</span>
+        </a>
+
+        <div className="hidden md:flex gap-8 text-sm font-medium text-gray-400 items-center">
+          <a href="/" className="hover:text-white transition">
+            Home
           </a>
-
-          <div className="min-w-0 text-center">
-            <div className="truncate text-[11px] uppercase tracking-[0.26em] text-white/45">
-              Heiyu Digital Product
-            </div>
-            <div className="truncate text-sm font-medium uppercase tracking-[0.18em] text-white/80">
-              Heiyu Budget
-            </div>
-          </div>
-
-          <button
-            onClick={onMenu}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#ffffff10] bg-white/[0.03] text-white/80"
-            aria-label="Open menu"
-            type="button"
-          >
-            <Menu className="h-5 w-5" />
-          </button>
+          <a href="/heiyubudget" className="text-white transition">
+            Heiyu Budget
+          </a>
+          <a href="/engagement" className="hover:text-white transition">
+            Quiz Platform
+          </a>
+          <a href="/mvp" className="hover:text-white transition">
+            MVP
+          </a>
+          <a href="/contact" className="hover:text-white transition">
+            Contact
+          </a>
         </div>
+
+        <button
+          onClick={onMenu}
+          className="md:hidden flex flex-col gap-1"
+          aria-label="Open menu"
+          type="button"
+        >
+          <span className="w-6 h-[2px] bg-white"></span>
+          <span className="w-6 h-[2px] bg-white"></span>
+          <span className="w-6 h-[2px] bg-white"></span>
+        </button>
       </div>
-    </header>
+    </nav>
   );
 }
 
@@ -80,70 +76,50 @@ function MobileMenu({
     <>
       {open && (
         <div
-          className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm"
+          className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm md:hidden"
           onClick={onClose}
         />
       )}
 
-      <div
-        className={`fixed right-4 top-4 z-50 w-[min(88vw,22rem)] rounded-[1.75rem] border border-[#ffffff10] bg-[#0b0b0b]/95 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl transition-all duration-300 ${
-          open
-            ? "translate-y-0 opacity-100"
-            : "pointer-events-none -translate-y-4 opacity-0"
-        }`}
-      >
-        <div className="mb-5 flex items-center justify-between">
-          <div>
-            <div className="text-[11px] uppercase tracking-[0.24em] text-white/40">
-              Navigate
-            </div>
-            <div className="mt-1 text-lg font-semibold">HeiyuBudget</div>
-          </div>
-
-          <button
-            onClick={onClose}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#ffffff10] bg-white/[0.03] text-white/80"
-            type="button"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        <div className="space-y-3">
+      {open && (
+        <div className="fixed top-20 left-0 w-full z-50 md:hidden bg-[#0a0a0a] border-t border-white/5 px-6 py-6 flex flex-col gap-6 text-gray-300 text-lg">
           <a
-            href="#top"
+            href="/"
             onClick={onClose}
-            className="block w-full rounded-2xl border border-[#ffffff10] bg-white/[0.03] px-4 py-4 text-left transition hover:bg-white/[0.06]"
+            className="hover:text-white transition"
           >
-            <div className="text-sm font-semibold">Top</div>
-            <div className="mt-1 text-sm text-white/50">
-              Hero and product positioning.
-            </div>
+            Home
           </a>
-
           <a
-            href="#audiences"
+            href="/heiyubudget"
             onClick={onClose}
-            className="block w-full rounded-2xl border border-[#ffffff10] bg-white/[0.03] px-4 py-4 text-left transition hover:bg-white/[0.06]"
+            className="text-white transition"
           >
-            <div className="text-sm font-semibold">Who it’s for</div>
-            <div className="mt-1 text-sm text-white/50">
-              Drivers, trade, creative, and service.
-            </div>
+            Heiyu Budget
           </a>
-
           <a
-            href="#roadmap"
+            href="/engagement"
             onClick={onClose}
-            className="block w-full rounded-2xl border border-[#ffffff10] bg-white/[0.03] px-4 py-4 text-left transition hover:bg-white/[0.06]"
+            className="hover:text-white transition"
           >
-            <div className="text-sm font-semibold">Roadmap</div>
-            <div className="mt-1 text-sm text-white/50">
-              Payments, invoices, receipts, and export.
-            </div>
+            Quiz Platform
+          </a>
+          <a
+            href="/mvp"
+            onClick={onClose}
+            className="hover:text-white transition"
+          >
+            MVP
+          </a>
+          <a
+            href="/contact"
+            onClick={onClose}
+            className="hover:text-white transition"
+          >
+            Contact
           </a>
         </div>
-      </div>
+      )}
     </>
   );
 }
@@ -326,9 +302,9 @@ export default function HeiyuBudgetPage() {
       <AppHeader onMenu={() => setMenuOpen(true)} />
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
 
-      <section
-        id="top"
-        className="relative mx-auto max-w-7xl px-4 pb-36 pt-8 sm:px-6 lg:px-10"
+    <section
+     id="top"
+     className="relative mx-auto max-w-7xl px-4 pb-16 pt-32 sm:px-6 lg:px-10"
       >
         <div className="pt-6 text-center sm:pt-10">
           <h1 className="mx-auto max-w-5xl text-[2.6rem] font-semibold leading-[0.95] tracking-[-0.07em] text-white sm:text-6xl lg:text-[6.25rem]">
@@ -656,7 +632,7 @@ export default function HeiyuBudgetPage() {
           </div>
         </section>
 
-        <section className="pb-28 pt-8" id="roadmap">
+        <section className="pb-12 pt-8" id="roadmap">
           <div className="mb-8 text-center sm:mb-10">
             <p className="text-[11px] uppercase tracking-[0.26em] text-white/40">
               Roadmap
@@ -737,8 +713,8 @@ export default function HeiyuBudgetPage() {
             </div>
           </div>
         </section>
-        {/* FOOTER */}
-<footer className="mt-20 border-t border-white/5">
+{/* FOOTER */}
+<footer className="mt-8 border-t border-white/5">
   <div className="max-w-6xl mx-auto px-6 py-12 text-sm text-gray-500 flex flex-col md:flex-row justify-between items-center gap-6">
     <div className="text-center md:text-left">
       © {new Date().getFullYear()} HEIYU
@@ -749,6 +725,7 @@ export default function HeiyuBudgetPage() {
       <a href="/" className="hover:text-white transition">Home</a>
       <a href="/heiyubudget" className="hover:text-white transition">Heiyu Budget</a>
       <a href="/engagement" className="hover:text-white transition">Quiz Platform</a>
+      <a href="/mvp" className="hover:text-white transition">MVP</a>
       <a href="/contact" className="hover:text-white transition">Contact</a>
       <a href="/privacy" className="hover:text-white transition">Privacy & Cookies</a>
     </div>

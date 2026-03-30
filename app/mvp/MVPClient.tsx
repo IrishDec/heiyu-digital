@@ -32,6 +32,7 @@ export default function MVPClient() {
     {/* Desktop Menu */}
     <div className="hidden md:flex gap-8 text-sm font-medium text-gray-400 items-center">
       <a href="/" className="hover:text-white transition">Home</a>
+      <a href="/heiyubudget" className="hover:text-white transition">Heiyu Budget</a>
       <a href="/engagement" className="hover:text-white transition">Quiz Platform</a>
       <a href="/mvp" className="hover:text-white transition">MVP</a>
       <a href="/contact" className="hover:text-white transition">Contact</a>
@@ -52,6 +53,7 @@ export default function MVPClient() {
   {mobileOpen && (
     <div className="md:hidden bg-[#0a0a0a] border-t border-white/5 px-6 py-6 flex flex-col gap-6 text-gray-300 text-lg">
       <a href="/" onClick={() => setMobileOpen(false)} className="hover:text-white transition">Home</a>
+      <a href="/heiyubudget" onClick={() => setMobileOpen(false)} className="hover:text-white transition">Heiyu Budget</a>
       <a href="/engagement" onClick={() => setMobileOpen(false)} className="hover:text-white transition">Quiz Platform</a>
       <a href="/mvp" onClick={() => setMobileOpen(false)} className="hover:text-white transition">MVP</a>
       <a href="/contact" onClick={() => setMobileOpen(false)} className="hover:text-white transition">Contact</a>
