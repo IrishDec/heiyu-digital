@@ -1,14 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
-type ControlState = {
-  aim: number;
-  power: number;
-  lastAction: string;
-  shotId: number;
-  updatedAt: string;
-};
+import { poolSocket } from "@/lib/pool/socket";
 
 export default function PoolGamePage() {
   const [aim, setAim] = useState(0);
@@ -19,43 +12,54 @@ export default function PoolGamePage() {
 
   const velocityRef = useRef({ x: 0, y: 0 });
   const ballRef = useRef({ x: 50, y: 50 });
-  const lastShotRef = useRef(0);
+  const aimRef = useRef(0);
+  const powerRef = useRef(50);
 
   useEffect(() => {
-    const poll = setInterval(async () => {
-      try {
-        const res = await fetch("/api/pool/control", { cache: "no-store" });
-        const data = await res.json();
-        const control: ControlState = data.control;
+    function aimLeft() {
+      aimRef.current -= 5;
+      setAim(aimRef.current);
+    }
 
-        setAim(control.aim);
-        setPower(control.power);
+    function aimRight() {
+      aimRef.current += 5;
+      setAim(aimRef.current);
+    }
 
-        const moving =
-          Math.abs(velocityRef.current.x) > 0 ||
-          Math.abs(velocityRef.current.y) > 0;
+    function updatePower(data: { power: number }) {
+      powerRef.current = data.power;
+      setPower(data.power);
+    }
 
-        if (
-          control.lastAction === "shoot" &&
-          control.shotId !== lastShotRef.current &&
-          !moving
-        ) {
-          lastShotRef.current = control.shotId;
+    function shoot() {
+      const moving =
+        Math.abs(velocityRef.current.x) > 0 ||
+        Math.abs(velocityRef.current.y) > 0;
 
-          const radians = (control.aim * Math.PI) / 180;
-          const speed = Math.max(0.8, control.power * 0.035);
+      if (moving) return;
 
-          velocityRef.current = {
-            x: Math.cos(radians) * speed,
-            y: Math.sin(radians) * speed,
-          };
+      const radians = (aimRef.current * Math.PI) / 180;
+      const speed = Math.max(0.8, powerRef.current * 0.035);
 
-          setIsMoving(true);
-        }
-      } catch {}
-    }, 200);
+      velocityRef.current = {
+        x: Math.cos(radians) * speed,
+        y: Math.sin(radians) * speed,
+      };
 
-    return () => clearInterval(poll);
+      setIsMoving(true);
+    }
+
+    poolSocket.on("game:aim-left", aimLeft);
+    poolSocket.on("game:aim-right", aimRight);
+    poolSocket.on("game:power", updatePower);
+    poolSocket.on("game:shoot", shoot);
+
+    return () => {
+      poolSocket.off("game:aim-left", aimLeft);
+      poolSocket.off("game:aim-right", aimRight);
+      poolSocket.off("game:power", updatePower);
+      poolSocket.off("game:shoot", shoot);
+    };
   }, []);
 
   useEffect(() => {

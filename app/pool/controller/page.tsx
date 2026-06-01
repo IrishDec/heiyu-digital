@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { poolSocket } from "@/lib/pool/socket";
 
 export default function PoolControllerPage() {
   const [pin, setPin] = useState("");
@@ -8,44 +9,49 @@ export default function PoolControllerPage() {
   const [paired, setPaired] = useState(false);
   const [power, setPower] = useState(50);
 
-  async function joinRoom() {
+  function joinRoom() {
+    const cleanPin = pin.replace(/\D/g, "").slice(0, 4);
+
+    if (cleanPin.length !== 4) {
+      setStatus("Enter a valid 4-digit PIN.");
+      return;
+    }
+
     setStatus("Joining room...");
 
-    try {
-      const res = await fetch("/api/pool/join-room", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ pin }),
-      });
+    poolSocket.emit("controller:join-room", {
+      pin: cleanPin,
+    });
 
-      const data = await res.json();
-
-      if (!res.ok || !data.ok) {
-        setStatus(data.message || "Could not join room.");
-        return;
-      }
-
+    poolSocket.once("controller:joined", () => {
       setPaired(true);
       setStatus("Connected");
-    } catch {
-      setStatus("Connection failed.");
-    }
+    });
+
+    poolSocket.once("controller:error", (data) => {
+      setStatus(data?.message || "Could not join room.");
+    });
   }
 
-  async function sendControl(action: string, value?: number) {
-    await fetch("/api/pool/control", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(
-        action === "set-power"
-          ? { action, power: value }
-          : { action }
-      ),
+  function sendAimLeft() {
+    poolSocket.emit("controller:aim-left", { pin });
+  }
+
+  function sendAimRight() {
+    poolSocket.emit("controller:aim-right", { pin });
+  }
+
+  function sendPower(nextPower: number) {
+    setPower(nextPower);
+
+    poolSocket.emit("controller:power", {
+      pin,
+      power: nextPower,
     });
+  }
+
+  function sendShoot() {
+    poolSocket.emit("controller:shoot", { pin });
   }
 
   if (paired) {
@@ -63,7 +69,7 @@ export default function PoolControllerPage() {
           <div className="grid grid-cols-2 gap-4">
             <button
               type="button"
-              onClick={() => sendControl("aim-left")}
+              onClick={sendAimLeft}
               className="rounded-2xl bg-white/10 p-8 text-xl font-bold active:bg-emerald-400 active:text-[#07140f]"
             >
               ◀ Aim Left
@@ -71,7 +77,7 @@ export default function PoolControllerPage() {
 
             <button
               type="button"
-              onClick={() => sendControl("aim-right")}
+              onClick={sendAimRight}
               className="rounded-2xl bg-white/10 p-8 text-xl font-bold active:bg-emerald-400 active:text-[#07140f]"
             >
               Aim Right ▶
@@ -88,18 +94,14 @@ export default function PoolControllerPage() {
               min="0"
               max="100"
               value={power}
-              onChange={(event) => {
-                const nextPower = Number(event.target.value);
-                setPower(nextPower);
-                sendControl("set-power", nextPower);
-              }}
+              onChange={(event) => sendPower(Number(event.target.value))}
               className="w-full"
             />
           </div>
 
           <button
             type="button"
-            onClick={() => sendControl("shoot")}
+            onClick={sendShoot}
             className="mt-8 w-full rounded-2xl bg-emerald-400 py-6 text-2xl font-black text-[#07140f] active:bg-emerald-300"
           >
             SHOOT

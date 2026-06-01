@@ -1,42 +1,32 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { poolSocket } from "@/lib/pool/socket";
 
 export default function PoolTvPage() {
   const [pin, setPin] = useState("----");
   const [status, setStatus] = useState("Creating TV room...");
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    poolSocket.emit("tv:create-room");
 
-    async function createRoom() {
-      const res = await fetch("/api/pool/create-room", {
-        method: "POST",
-      });
-
-      const data = await res.json();
-
-      setPin(data.pin);
+    poolSocket.on("tv:room-created", ({ pin }) => {
+      setPin(pin);
       setStatus("Waiting for phone controller...");
+    });
 
-      interval = setInterval(async () => {
-        const roomRes = await fetch(
-          `/api/pool/room-status?pin=${data.pin}`
-        );
+    poolSocket.on("tv:controller-connected", () => {
+      setStatus("Phone connected. Ready to play.");
+    });
 
-        const roomData = await roomRes.json();
-
-        if (roomData.paired) {
-          setStatus("Phone connected. Ready to play.");
-          clearInterval(interval);
-        }
-      }, 2000);
-    }
-
-    createRoom();
+    poolSocket.on("tv:controller-disconnected", () => {
+      setStatus("Phone disconnected.");
+    });
 
     return () => {
-      if (interval) clearInterval(interval);
+      poolSocket.off("tv:room-created");
+      poolSocket.off("tv:controller-connected");
+      poolSocket.off("tv:controller-disconnected");
     };
   }, []);
 
