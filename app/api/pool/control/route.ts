@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 type PoolControlState = {
   aim: number;
   power: number;
-  lastAction: string;
+  shootQueued: boolean;
   shotId: number;
   updatedAt: string;
 };
@@ -17,7 +17,7 @@ function getControlState() {
     globalThis.poolControlState = {
       aim: 0,
       power: 50,
-      lastAction: "none",
+      shootQueued: false,
       shotId: 0,
       updatedAt: new Date().toISOString(),
     };
@@ -27,10 +27,18 @@ function getControlState() {
 }
 
 export async function GET() {
-  return Response.json({
+  const control = getControlState();
+
+  const response = {
     ok: true,
-    control: getControlState(),
-  });
+    control: { ...control },
+  };
+
+  if (control.shootQueued) {
+    control.shootQueued = false;
+  }
+
+  return Response.json(response);
 }
 
 export async function POST(request: Request) {
@@ -42,22 +50,19 @@ export async function POST(request: Request) {
 
   if (action === "aim-left") {
     control.aim -= 5;
-    control.lastAction = "aim-left";
   }
 
   if (action === "aim-right") {
     control.aim += 5;
-    control.lastAction = "aim-right";
   }
 
   if (action === "set-power" && Number.isFinite(power)) {
     control.power = Math.max(0, Math.min(100, power));
-    control.lastAction = "set-power";
   }
 
   if (action === "shoot") {
+    control.shootQueued = true;
     control.shotId += 1;
-    control.lastAction = "shoot";
   }
 
   control.updatedAt = new Date().toISOString();
