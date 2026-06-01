@@ -56,6 +56,27 @@ io.on("connection", (socket) => {
     console.log("TV room created:", pin);
   });
 
+  socket.on("tv:join-room", ({ pin }) => {
+  const cleanPin = String(pin || "").replace(/\D/g, "").slice(0, 4);
+  const room = rooms.get(cleanPin);
+
+  if (!room) {
+    socket.emit("tv:error", {
+      message: "Room not found",
+    });
+    return;
+  }
+
+  room.tvSocketId = socket.id;
+  socket.join(cleanPin);
+
+  socket.emit("tv:joined-room", {
+    pin: cleanPin,
+  });
+
+  console.log("TV joined existing game room:", cleanPin);
+});
+
   socket.on("controller:join-room", ({ pin }) => {
     const cleanPin = String(pin || "").replace(/\D/g, "").slice(0, 4);
     const room = rooms.get(cleanPin);
