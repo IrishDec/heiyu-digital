@@ -10,15 +10,15 @@ const TABLE_WIDTH = 1000;
 const TABLE_HEIGHT = 560;
 const BALL_RADIUS = 16;
 
-const POCKET_RADIUS = 52;
+const POCKET_RADIUS = 48;
 
 const POCKETS = [
-  { x: 78, y: 78 },
-  { x: TABLE_WIDTH / 2, y: 64 },
-  { x: TABLE_WIDTH - 78, y: 78 },
-  { x: 78, y: TABLE_HEIGHT - 78 },
-  { x: TABLE_WIDTH / 2, y: TABLE_HEIGHT - 64 },
-  { x: TABLE_WIDTH - 78, y: TABLE_HEIGHT - 78 },
+  { x: 92, y: 86 },
+  { x: TABLE_WIDTH / 2, y: 78 },
+  { x: TABLE_WIDTH - 92, y: 86 },
+  { x: 92, y: TABLE_HEIGHT - 86 },
+  { x: TABLE_WIDTH / 2, y: TABLE_HEIGHT - 78 },
+  { x: TABLE_WIDTH - 92, y: TABLE_HEIGHT - 86 },
 ];
 
 export default function PoolGamePage() {
@@ -31,7 +31,9 @@ export default function PoolGamePage() {
 });
   const [isMoving, setIsMoving] = useState(false);
   const [blackBallPotted, setBlackBallPotted] = useState(false);
+  const [blackBallSinking, setBlackBallSinking] = useState(false);
   const [roomPin, setRoomPin] = useState("----");
+  const [cueStriking, setCueStriking] = useState(false);
 
   const engineRef = useRef<Matter.Engine | null>(null);
   const cueBallRef = useRef<Matter.Body | null>(null);
@@ -171,10 +173,19 @@ Matter.World.add(engine.world, [
       const radians = (aimRef.current * Math.PI) / 180;
       const force = Math.max(0.025, powerRef.current * 0.0012);
 
-      Matter.Body.applyForce(cueBall, cueBall.position, {
-x: -Math.cos(radians) * force,
-y: -Math.sin(radians) * force,
-      });
+ setCueStriking(true);
+
+setTimeout(() => {
+  Matter.Body.applyForce(cueBall, cueBall.position, {
+  x: Math.cos(radians) * force,
+  y: Math.sin(radians) * force,
+  });
+
+  setTimeout(() => {
+    setCueStriking(false);
+  }, 180);
+}, 140);
+    
     });
 
     return () => {
@@ -206,8 +217,8 @@ useEffect(() => {
       y: cueBall.position.y,
     });
 
-  if (blackBall && !blackBallPotted) {
-  const isPotted = POCKETS.some((pocket) => {
+ if (blackBall && !blackBallPotted && !blackBallSinking) {
+  const pocket = POCKETS.find((pocket) => {
     const dx = blackBall.position.x - pocket.x;
     const dy = blackBall.position.y - pocket.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -215,10 +226,25 @@ useEffect(() => {
     return distance < POCKET_RADIUS;
   });
 
-  if (isPotted && engineRef.current) {
-    Matter.World.remove(engineRef.current.world, blackBall);
-    blackBallRef.current = null;
-    setBlackBallPotted(true);
+  if (pocket) {
+    setBlackBallSinking(true);
+
+    Matter.Body.setVelocity(blackBall, { x: 0, y: 0 });
+    Matter.Body.setAngularVelocity(blackBall, 0);
+    Matter.Body.setPosition(blackBall, pocket);
+
+    setBlackBall({ x: pocket.x, y: pocket.y });
+
+    setTimeout(() => {
+      const engine = engineRef.current;
+
+      if (engine) {
+        Matter.World.remove(engine.world, blackBall);
+      }
+
+      blackBallRef.current = null;
+      setBlackBallPotted(true);
+    }, 450);
   } else {
     setBlackBall({
       x: blackBall.position.x,
@@ -267,18 +293,32 @@ return (
           </div>
         </div>
 
-        {!isMoving && (
-          <div
-            className="absolute origin-left rounded-full bg-white"
-            style={{
-              left: `${ballXPercent}%`,
-              top: `${ballYPercent}%`,
-              width: "220px",
-              height: "4px",
-              transform: `translateY(-50%) rotate(${aim}deg)`,
-            }}
-          />
-        )}
+       {!isMoving && (
+  <>
+    {/* Aim guide */}
+    <div
+      className="absolute z-30 origin-left border-t-2 border-dashed border-white/70"
+      style={{
+        left: `${ballXPercent}%`,
+        top: `${ballYPercent}%`,
+        width: "360px",
+        transform: `translateY(-50%) rotate(${aim}deg)`,
+      }}
+    />
+
+    {/* Cue stick: same math as old white line, offset behind ball */}
+    <div
+      className="absolute z-30 origin-left rounded-full bg-gradient-to-r from-[#3b1d0b] via-[#c28a4a] to-[#f3d6a2] shadow-lg"
+      style={{
+        left: `${ballXPercent}%`,
+        top: `${ballYPercent}%`,
+        width: "300px",
+        height: "10px",
+        transform: `translateY(-50%) rotate(${aim + 180}deg) translateX(26px)`,
+      }}
+    />
+  </>
+)}
 
         <div
           className="absolute rounded-full bg-white shadow-lg"
