@@ -178,7 +178,15 @@ useEffect(() => {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#07140f] p-8">
-      <div className="relative aspect-[1000/560] w-full max-w-7xl overflow-hidden rounded-[32px] border-8 border-[#4a2c12] bg-[#0b6b3a] shadow-2xl">
+      <div className="relative aspect-[1000/560] w-full max-w-7xl overflow-hidden rounded-[42px] border-[28px] border-[#5a2f12] bg-[#0b6b3a] shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
+      {/* Felt texture overlay */}
+<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.10),transparent_55%)]" />
+<div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:18px_18px] opacity-20" />
+
+{/* Inner cushion */}
+<div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,#7a421b,#3b1d0b_45%,#8a4a1f_70%,#2a1408)] opacity-95" />
+<div className="pointer-events-none absolute inset-[34px] rounded-[26px] bg-[#0b6b3a] shadow-[inset_0_18px_35px_rgba(0,0,0,0.45)]" />
+<div className="pointer-events-none absolute inset-[54px] rounded-[20px] border-[18px] border-[#0f5a34] shadow-[inset_0_8px_20px_rgba(0,0,0,0.45)]" />
       {/* Pockets */}
 <div className="absolute left-3 top-3 h-14 w-14 rounded-full bg-black shadow-inner" />
 <div className="absolute left-1/2 top-2 h-14 w-14 -translate-x-1/2 rounded-full bg-black shadow-inner" />
