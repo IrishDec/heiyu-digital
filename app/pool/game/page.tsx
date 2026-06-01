@@ -10,6 +10,17 @@ const TABLE_WIDTH = 1000;
 const TABLE_HEIGHT = 560;
 const BALL_RADIUS = 16;
 
+const POCKET_RADIUS = 34;
+
+const POCKETS = [
+  { x: 38, y: 38 },
+  { x: TABLE_WIDTH / 2, y: 28 },
+  { x: TABLE_WIDTH - 38, y: 38 },
+  { x: 38, y: TABLE_HEIGHT - 38 },
+  { x: TABLE_WIDTH / 2, y: TABLE_HEIGHT - 28 },
+  { x: TABLE_WIDTH - 38, y: TABLE_HEIGHT - 38 },
+];
+
 export default function PoolGamePage() {
   const [aim, setAim] = useState(0);
   const [power, setPower] = useState(50);
@@ -19,6 +30,7 @@ export default function PoolGamePage() {
   y: TABLE_HEIGHT / 2,
 });
   const [isMoving, setIsMoving] = useState(false);
+  const [blackBallPotted, setBlackBallPotted] = useState(false);
   const [roomPin, setRoomPin] = useState("----");
 
   const engineRef = useRef<Matter.Engine | null>(null);
@@ -194,12 +206,26 @@ useEffect(() => {
       y: cueBall.position.y,
     });
 
-    if (blackBall) {
-      setBlackBall({
-        x: blackBall.position.x,
-        y: blackBall.position.y,
-      });
-    }
+  if (blackBall && !blackBallPotted) {
+  const isPotted = POCKETS.some((pocket) => {
+    const dx = blackBall.position.x - pocket.x;
+    const dy = blackBall.position.y - pocket.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    return distance < POCKET_RADIUS;
+  });
+
+  if (isPotted && engineRef.current) {
+    Matter.World.remove(engineRef.current.world, blackBall);
+    blackBallRef.current = null;
+    setBlackBallPotted(true);
+  } else {
+    setBlackBall({
+      x: blackBall.position.x,
+      y: blackBall.position.y,
+    });
+  }
+}
   }, 1000 / 60);
 
   return () => clearInterval(frame);
@@ -276,16 +302,18 @@ useEffect(() => {
             transform: "translate(-50%, -50%)",
           }}
         />
-        <div
-  className="absolute rounded-full bg-black shadow-lg ring-2 ring-white/20"
-  style={{
-    left: `${blackBallXPercent}%`,
-    top: `${blackBallYPercent}%`,
-    width: `${BALL_RADIUS * 2}px`,
-    height: `${BALL_RADIUS * 2}px`,
-    transform: "translate(-50%, -50%)",
-  }}
-/>
+      {!blackBallPotted && (
+  <div
+    className="absolute rounded-full bg-black shadow-lg ring-2 ring-white/20"
+    style={{
+      left: `${blackBallXPercent}%`,
+      top: `${blackBallYPercent}%`,
+      width: `${BALL_RADIUS * 2}px`,
+      height: `${BALL_RADIUS * 2}px`,
+      transform: "translate(-50%, -50%)",
+    }}
+  />
+)}
       </div>
 
 
