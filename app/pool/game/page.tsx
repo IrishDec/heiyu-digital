@@ -43,7 +43,7 @@ export default function PoolGamePage() {
     const cueBall = Matter.Bodies.circle(TABLE_WIDTH / 2, TABLE_HEIGHT / 2, BALL_RADIUS, {
       restitution: 0.92,
       friction: 0,
-      frictionAir: 0.018,
+    frictionAir: 0.006,
       density: 0.004,
     });
 
@@ -96,10 +96,10 @@ export default function PoolGamePage() {
       if (speed > 0.15) return;
 
       const radians = (aimRef.current * Math.PI) / 180;
-      const force = Math.max(0.006, powerRef.current * 0.00022);
+      const force = Math.max(0.025, powerRef.current * 0.0012);
 
       Matter.Body.applyForce(cueBall, cueBall.position, {
-        x: -Math.cos(radians) * force,
+x: -Math.cos(radians) * force,
 y: -Math.sin(radians) * force,
       });
     });
