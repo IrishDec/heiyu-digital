@@ -40,7 +40,7 @@ export default function PoolGamePage() {
       friction: 0,
     };
 
-   const cushionInset = 58;
+   const cushionInset = 38;
 
 const topWall = Matter.Bodies.rectangle(
   TABLE_WIDTH / 2,
