@@ -1,13 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { poolSocket } from "@/lib/pool/socket";
 
 export default function PoolGamePage() {
-  const searchParams = useSearchParams();
-  const pin = searchParams.get("pin");
-
   const [aim, setAim] = useState(0);
   const [power, setPower] = useState(50);
   const [ballX, setBallX] = useState(50);
@@ -20,11 +16,7 @@ export default function PoolGamePage() {
   const powerRef = useRef(50);
 
   useEffect(() => {
-    if (pin) {
-      poolSocket.emit("tv:join-room", { pin });
-    }
-
-    function aimLeft() {
+   function aimLeft() {
       aimRef.current -= 5;
       setAim(aimRef.current);
     }
@@ -68,8 +60,7 @@ export default function PoolGamePage() {
       poolSocket.off("game:power", updatePower);
       poolSocket.off("game:shoot", shoot);
     };
-  }, [pin]);
-
+ }, []);
   useEffect(() => {
     const timer = setInterval(() => {
       let nextX = ballRef.current.x + velocityRef.current.x;
