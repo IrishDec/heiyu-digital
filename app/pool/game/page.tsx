@@ -29,8 +29,21 @@ export default function PoolGamePage() {
   x: TABLE_WIDTH / 2 + 220,
   y: TABLE_HEIGHT / 2,
 });
+
+const [solidBall, setSolidBall] = useState({
+  x: TABLE_WIDTH / 2 + 120,
+  y: TABLE_HEIGHT / 2 - 70,
+});
+
+const [stripeBall, setStripeBall] = useState({
+  x: TABLE_WIDTH / 2 + 120,
+  y: TABLE_HEIGHT / 2 + 70,
+});
+
   const [isMoving, setIsMoving] = useState(false);
   const [blackBallPotted, setBlackBallPotted] = useState(false);
+  const [solidBallPotted, setSolidBallPotted] = useState(false);
+const [stripeBallPotted, setStripeBallPotted] = useState(false);
   const [blackBallSinking, setBlackBallSinking] = useState(false);
   const [roomPin, setRoomPin] = useState("----");
   const [cueStriking, setCueStriking] = useState(false);
@@ -38,6 +51,8 @@ export default function PoolGamePage() {
   const engineRef = useRef<Matter.Engine | null>(null);
   const cueBallRef = useRef<Matter.Body | null>(null);
   const blackBallRef = useRef<Matter.Body | null>(null);
+  const solidBallRef = useRef<Matter.Body | null>(null);
+  const stripeBallRef = useRef<Matter.Body | null>(null);
   const aimRef = useRef(0);
   const powerRef = useRef(50);
 
@@ -108,18 +123,46 @@ const rightWall = Matter.Bodies.rectangle(
   }
 );
 
+const solidBall = Matter.Bodies.circle(
+  TABLE_WIDTH / 2 + 120,
+  TABLE_HEIGHT / 2 - 70,
+  BALL_RADIUS,
+  {
+    restitution: 0.95,
+    friction: 0.01,
+    frictionAir: 0.01,
+  }
+);
+
+const stripeBall = Matter.Bodies.circle(
+  TABLE_WIDTH / 2 + 120,
+  TABLE_HEIGHT / 2 + 70,
+  BALL_RADIUS,
+  {
+    restitution: 0.95,
+    friction: 0.01,
+    frictionAir: 0.01,
+  }
+);
+
+solidBallRef.current = solidBall;
+stripeBallRef.current = stripeBall;
+
 blackBallRef.current = blackBall;
 
     cueBallRef.current = cueBall;
 
 Matter.World.add(engine.world, [
+  cueBall,
+  blackBall,
+  solidBall,
+  stripeBall,
   topWall,
   bottomWall,
   leftWall,
   rightWall,
-  cueBall,
-  blackBall,
 ]);
+
 
     return () => {
       Matter.World.clear(engine.world, false);
@@ -192,11 +235,14 @@ setTimeout(() => {
       socket.disconnect();
     };
   }, []);
+
 useEffect(() => {
   const frame = setInterval(() => {
     const engine = engineRef.current;
     const cueBall = cueBallRef.current;
     const blackBall = blackBallRef.current;
+    const solidBall = solidBallRef.current;
+    const stripeBall = stripeBallRef.current;
 
     if (!engine || !cueBall) return;
 
@@ -217,50 +263,156 @@ useEffect(() => {
       y: cueBall.position.y,
     });
 
- if (blackBall && !blackBallPotted && !blackBallSinking) {
-  const pocket = POCKETS.find((pocket) => {
-    const dx = blackBall.position.x - pocket.x;
-    const dy = blackBall.position.y - pocket.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (blackBall && !blackBallPotted && !blackBallSinking) {
+      const pocket = POCKETS.find((pocket) => {
+        const dx = blackBall.position.x - pocket.x;
+        const dy = blackBall.position.y - pocket.y;
+        return Math.sqrt(dx * dx + dy * dy) < POCKET_RADIUS;
+      });
 
-    return distance < POCKET_RADIUS;
-  });
+      if (pocket) {
+        setBlackBallSinking(true);
+        Matter.Body.setVelocity(blackBall, { x: 0, y: 0 });
+        Matter.Body.setAngularVelocity(blackBall, 0);
+        Matter.Body.setPosition(blackBall, pocket);
+        setBlackBall({ x: pocket.x, y: pocket.y });
 
-  if (pocket) {
-    setBlackBallSinking(true);
-
-    Matter.Body.setVelocity(blackBall, { x: 0, y: 0 });
-    Matter.Body.setAngularVelocity(blackBall, 0);
-    Matter.Body.setPosition(blackBall, pocket);
-
-    setBlackBall({ x: pocket.x, y: pocket.y });
-
-    setTimeout(() => {
-      const engine = engineRef.current;
-
-      if (engine) {
-        Matter.World.remove(engine.world, blackBall);
+        setTimeout(() => {
+          const engine = engineRef.current;
+          if (engine) Matter.World.remove(engine.world, blackBall);
+          blackBallRef.current = null;
+          setBlackBallPotted(true);
+        }, 450);
+      } else {
+        setBlackBall({
+          x: blackBall.position.x,
+          y: blackBall.position.y,
+        });
       }
+    }
 
-      blackBallRef.current = null;
-      setBlackBallPotted(true);
-    }, 450);
-  } else {
-    setBlackBall({
-      x: blackBall.position.x,
-      y: blackBall.position.y,
-    });
-  }
-}
+    if (solidBall && !solidBallPotted) {
+      const pocket = POCKETS.find((pocket) => {
+        const dx = solidBall.position.x - pocket.x;
+        const dy = solidBall.position.y - pocket.y;
+        return Math.sqrt(dx * dx + dy * dy) < POCKET_RADIUS;
+      });
+
+      if (pocket) {
+        Matter.World.remove(engine.world, solidBall);
+        solidBallRef.current = null;
+        setSolidBallPotted(true);
+      } else {
+        setSolidBall({
+          x: solidBall.position.x,
+          y: solidBall.position.y,
+        });
+      }
+    }
+
+    if (stripeBall && !stripeBallPotted) {
+      const pocket = POCKETS.find((pocket) => {
+        const dx = stripeBall.position.x - pocket.x;
+        const dy = stripeBall.position.y - pocket.y;
+        return Math.sqrt(dx * dx + dy * dy) < POCKET_RADIUS;
+      });
+
+      if (pocket) {
+        Matter.World.remove(engine.world, stripeBall);
+        stripeBallRef.current = null;
+        setStripeBallPotted(true);
+      } else {
+        setStripeBall({
+          x: stripeBall.position.x,
+          y: stripeBall.position.y,
+        });
+      }
+    }
   }, 1000 / 60);
 
   return () => clearInterval(frame);
-}, []);
+}, [blackBallPotted, blackBallSinking, solidBallPotted, stripeBallPotted]);
 
   const ballXPercent = (ball.x / TABLE_WIDTH) * 100;
   const ballYPercent = (ball.y / TABLE_HEIGHT) * 100;
   const blackBallXPercent = (blackBall.x / TABLE_WIDTH) * 100;
   const blackBallYPercent = (blackBall.y / TABLE_HEIGHT) * 100;
+  const getAimLineLength = () => {
+  const radians = (aim * Math.PI) / 180;
+
+  const startX = ball.x;
+  const startY = ball.y;
+
+  const dirX = Math.cos(radians);
+  const dirY = Math.sin(radians);
+
+  let maxDistance = 900;
+
+  if (dirX > 0) {
+    maxDistance = Math.min(maxDistance, (TABLE_WIDTH - 82 - startX) / dirX);
+  }
+
+  if (dirX < 0) {
+    maxDistance = Math.min(maxDistance, (82 - startX) / dirX);
+  }
+
+  if (dirY > 0) {
+    maxDistance = Math.min(maxDistance, (TABLE_HEIGHT - 82 - startY) / dirY);
+  }
+
+  if (dirY < 0) {
+    maxDistance = Math.min(maxDistance, (82 - startY) / dirY);
+  }
+
+  const ballsToCheck = [
+    !blackBallPotted ? blackBall : null,
+    !solidBallPotted ? solidBall : null,
+    !stripeBallPotted ? stripeBall : null,
+  ].filter(Boolean) as { x: number; y: number }[];
+
+  for (const target of ballsToCheck) {
+    const toBallX = target.x - startX;
+    const toBallY = target.y - startY;
+
+    const projection = toBallX * dirX + toBallY * dirY;
+
+    if (projection <= 0) continue;
+
+    const closestX = startX + dirX * projection;
+    const closestY = startY + dirY * projection;
+
+    const dx = target.x - closestX;
+    const dy = target.y - closestY;
+    const distanceToLine = Math.sqrt(dx * dx + dy * dy);
+
+    if (distanceToLine <= BALL_RADIUS * 2) {
+      maxDistance = Math.min(maxDistance, projection - BALL_RADIUS);
+    }
+  }
+
+  return Math.max(40, maxDistance);
+};
+
+const aimLineLength = getAimLineLength();
+const aimRadians = (aim * Math.PI) / 180;
+const aimDirX = Math.cos(aimRadians);
+const aimDirY = Math.sin(aimRadians);
+
+const aimStartX = ball.x + aimDirX * (BALL_RADIUS + 8);
+const aimStartY = ball.y + aimDirY * (BALL_RADIUS + 8);
+const aimEndX = ball.x + aimDirX * aimLineLength;
+const aimEndY = ball.y + aimDirY * aimLineLength;
+
+const cueTipGap = cueStriking ? 6 : 34;
+const cueTipX = ball.x - aimDirX * (BALL_RADIUS + cueTipGap);
+const cueTipY = ball.y - aimDirY * (BALL_RADIUS + cueTipGap);
+const cueBackX = ball.x - aimDirX * 300;
+const cueBackY = ball.y - aimDirY * 300;
+  const solidBallXPercent = (solidBall.x / TABLE_WIDTH) * 100;
+const solidBallYPercent = (solidBall.y / TABLE_HEIGHT) * 100;
+
+const stripeBallXPercent = (stripeBall.x / TABLE_WIDTH) * 100;
+const stripeBallYPercent = (stripeBall.y / TABLE_HEIGHT) * 100;
 return (
   <main className="flex min-h-screen items-center justify-center bg-[#07140f] p-8">
    <div className="relative aspect-[2/1] w-[96vw] max-w-[1800px] overflow-hidden rounded-[28px] shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
@@ -293,31 +445,53 @@ return (
           </div>
         </div>
 
-       {!isMoving && (
-  <>
-    {/* Aim guide */}
-    <div
-      className="absolute z-30 origin-left border-t-2 border-dashed border-white/70"
-      style={{
-        left: `${ballXPercent}%`,
-        top: `${ballYPercent}%`,
-        width: "360px",
-        transform: `translateY(-50%) rotate(${aim}deg)`,
-      }}
+{!isMoving && (
+  <svg
+    className="pointer-events-none absolute inset-0 z-30 h-full w-full"
+    viewBox={`0 0 ${TABLE_WIDTH} ${TABLE_HEIGHT}`}
+    preserveAspectRatio="none"
+  >
+    <line
+      x1={aimStartX}
+      y1={aimStartY}
+      x2={aimEndX}
+      y2={aimEndY}
+      stroke="rgba(255,255,255,0.75)"
+      strokeWidth="2"
+      strokeDasharray="6 6"
+      strokeLinecap="round"
     />
 
-    {/* Cue stick: same math as old white line, offset behind ball */}
-    <div
-      className="absolute z-30 origin-left rounded-full bg-gradient-to-r from-[#3b1d0b] via-[#c28a4a] to-[#f3d6a2] shadow-lg"
-      style={{
-        left: `${ballXPercent}%`,
-        top: `${ballYPercent}%`,
-        width: "300px",
-        height: "10px",
-        transform: `translateY(-50%) rotate(${aim + 180}deg) translateX(26px)`,
-      }}
+<line
+  x1={cueBackX}
+  y1={cueBackY}
+  x2={cueTipX}
+  y2={cueTipY}
+  stroke="#3b1d0b"
+  strokeWidth="10"
+  strokeLinecap="round"
+/>
+
+<line
+  x1={cueBackX}
+  y1={cueBackY}
+  x2={cueTipX}
+  y2={cueTipY}
+  stroke="#d6a25a"
+  strokeWidth="6"
+  strokeLinecap="round"
+/>
+
+    <line
+      x1={cueTipX - aimDirX * 12}
+      y1={cueTipY - aimDirY * 12}
+      x2={cueTipX}
+      y2={cueTipY}
+      stroke="#f3d6a2"
+      strokeWidth="7"
+      strokeLinecap="round"
     />
-  </>
+  </svg>
 )}
 
         <div
@@ -341,6 +515,36 @@ return (
       transform: "translate(-50%, -50%)",
     }}
   />
+)}
+{!solidBallPotted && (
+  <div
+    className="absolute z-30 flex items-center justify-center rounded-full bg-yellow-400 text-[10px] font-black text-black shadow-lg ring-2 ring-white/40"
+    style={{
+      left: `${solidBallXPercent}%`,
+      top: `${solidBallYPercent}%`,
+      width: `${BALL_RADIUS * 2}px`,
+      height: `${BALL_RADIUS * 2}px`,
+      transform: "translate(-50%, -50%)",
+    }}
+  >
+    1
+  </div>
+)}
+
+{!stripeBallPotted && (
+  <div
+    className="absolute z-30 flex items-center justify-center overflow-hidden rounded-full bg-white text-[10px] font-black text-black shadow-lg ring-2 ring-white/40"
+    style={{
+      left: `${stripeBallXPercent}%`,
+      top: `${stripeBallYPercent}%`,
+      width: `${BALL_RADIUS * 2}px`,
+      height: `${BALL_RADIUS * 2}px`,
+      transform: "translate(-50%, -50%)",
+    }}
+  >
+    <div className="absolute left-0 right-0 top-1/2 h-3 -translate-y-1/2 bg-yellow-400" />
+    <span className="relative z-10">9</span>
+  </div>
 )}
       </div>
 
