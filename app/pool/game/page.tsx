@@ -40,10 +40,39 @@ export default function PoolGamePage() {
       friction: 0,
     };
 
-    const topWall = Matter.Bodies.rectangle(TABLE_WIDTH / 2, 0, TABLE_WIDTH, 24, wallOptions);
-    const bottomWall = Matter.Bodies.rectangle(TABLE_WIDTH / 2, TABLE_HEIGHT, TABLE_WIDTH, 24, wallOptions);
-    const leftWall = Matter.Bodies.rectangle(0, TABLE_HEIGHT / 2, 24, TABLE_HEIGHT, wallOptions);
-    const rightWall = Matter.Bodies.rectangle(TABLE_WIDTH, TABLE_HEIGHT / 2, 24, TABLE_HEIGHT, wallOptions);
+   const cushionInset = 58;
+
+const topWall = Matter.Bodies.rectangle(
+  TABLE_WIDTH / 2,
+  cushionInset,
+  TABLE_WIDTH,
+  28,
+  wallOptions
+);
+
+const bottomWall = Matter.Bodies.rectangle(
+  TABLE_WIDTH / 2,
+  TABLE_HEIGHT - cushionInset,
+  TABLE_WIDTH,
+  28,
+  wallOptions
+);
+
+const leftWall = Matter.Bodies.rectangle(
+  cushionInset,
+  TABLE_HEIGHT / 2,
+  28,
+  TABLE_HEIGHT,
+  wallOptions
+);
+
+const rightWall = Matter.Bodies.rectangle(
+  TABLE_WIDTH - cushionInset,
+  TABLE_HEIGHT / 2,
+  28,
+  TABLE_HEIGHT,
+  wallOptions
+);
 
     const cueBall = Matter.Bodies.circle(TABLE_WIDTH / 2, TABLE_HEIGHT / 2, BALL_RADIUS, {
       restitution: 0.92,
