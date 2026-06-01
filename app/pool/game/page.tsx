@@ -1,22 +1,61 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Matter from "matter-js";
 import { io } from "socket.io-client";
 
 const SOCKET_URL = "https://heiyu-pool-server.onrender.com";
 
+const TABLE_WIDTH = 1000;
+const TABLE_HEIGHT = 560;
+const BALL_RADIUS = 16;
+
 export default function PoolGamePage() {
   const [aim, setAim] = useState(0);
   const [power, setPower] = useState(50);
-  const [ballX, setBallX] = useState(50);
-  const [ballY, setBallY] = useState(50);
+  const [ball, setBall] = useState({ x: TABLE_WIDTH / 2, y: TABLE_HEIGHT / 2 });
   const [isMoving, setIsMoving] = useState(false);
   const [roomPin, setRoomPin] = useState("----");
 
-  const velocityRef = useRef({ x: 0, y: 0 });
-  const ballRef = useRef({ x: 50, y: 50 });
+  const engineRef = useRef<Matter.Engine | null>(null);
+  const cueBallRef = useRef<Matter.Body | null>(null);
   const aimRef = useRef(0);
   const powerRef = useRef(50);
+
+  useEffect(() => {
+    const engine = Matter.Engine.create({
+      gravity: { x: 0, y: 0 },
+    });
+
+    engineRef.current = engine;
+
+    const wallOptions = {
+      isStatic: true,
+      restitution: 0.9,
+      friction: 0,
+    };
+
+    const topWall = Matter.Bodies.rectangle(TABLE_WIDTH / 2, 0, TABLE_WIDTH, 24, wallOptions);
+    const bottomWall = Matter.Bodies.rectangle(TABLE_WIDTH / 2, TABLE_HEIGHT, TABLE_WIDTH, 24, wallOptions);
+    const leftWall = Matter.Bodies.rectangle(0, TABLE_HEIGHT / 2, 24, TABLE_HEIGHT, wallOptions);
+    const rightWall = Matter.Bodies.rectangle(TABLE_WIDTH, TABLE_HEIGHT / 2, 24, TABLE_HEIGHT, wallOptions);
+
+    const cueBall = Matter.Bodies.circle(TABLE_WIDTH / 2, TABLE_HEIGHT / 2, BALL_RADIUS, {
+      restitution: 0.92,
+      friction: 0,
+      frictionAir: 0.018,
+      density: 0.004,
+    });
+
+    cueBallRef.current = cueBall;
+
+    Matter.World.add(engine.world, [topWall, bottomWall, leftWall, rightWall, cueBall]);
+
+    return () => {
+      Matter.World.clear(engine.world, false);
+      Matter.Engine.clear(engine);
+    };
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -50,21 +89,19 @@ export default function PoolGamePage() {
     });
 
     socket.on("game:shoot", () => {
-      const moving =
-        Math.abs(velocityRef.current.x) > 0 ||
-        Math.abs(velocityRef.current.y) > 0;
+      const cueBall = cueBallRef.current;
+      if (!cueBall) return;
 
-      if (moving) return;
+      const speed = Math.hypot(cueBall.velocity.x, cueBall.velocity.y);
+      if (speed > 0.15) return;
 
       const radians = (aimRef.current * Math.PI) / 180;
-      const speed = Math.max(0.8, powerRef.current * 0.035);
+      const force = Math.max(0.002, powerRef.current * 0.00008);
 
-      velocityRef.current = {
-        x: Math.cos(radians) * speed,
-        y: Math.sin(radians) * speed,
-      };
-
-      setIsMoving(true);
+      Matter.Body.applyForce(cueBall, cueBall.position, {
+        x: Math.cos(radians) * force,
+        y: Math.sin(radians) * force,
+      });
     });
 
     return () => {
@@ -72,45 +109,40 @@ export default function PoolGamePage() {
     };
   }, []);
 
-
   useEffect(() => {
-    const timer = setInterval(() => {
-      let nextX = ballRef.current.x + velocityRef.current.x;
-      let nextY = ballRef.current.y + velocityRef.current.y;
+    const frame = setInterval(() => {
+      const engine = engineRef.current;
+      const cueBall = cueBallRef.current;
 
-      if (nextX <= 3 || nextX >= 97) {
-        velocityRef.current.x *= -0.65;
-        nextX = Math.max(3, Math.min(97, nextX));
+      if (!engine || !cueBall) return;
+
+      Matter.Engine.update(engine, 1000 / 60);
+
+      const speed = Math.hypot(cueBall.velocity.x, cueBall.velocity.y);
+
+      if (speed < 0.08) {
+        Matter.Body.setVelocity(cueBall, { x: 0, y: 0 });
+        Matter.Body.setAngularVelocity(cueBall, 0);
+        setIsMoving(false);
+      } else {
+        setIsMoving(true);
       }
 
-      if (nextY <= 5 || nextY >= 95) {
-        velocityRef.current.y *= -0.65;
-        nextY = Math.max(5, Math.min(95, nextY));
-      }
+      setBall({
+        x: cueBall.position.x,
+        y: cueBall.position.y,
+      });
+    }, 1000 / 60);
 
-      velocityRef.current.x *= 0.96;
-      velocityRef.current.y *= 0.96;
-
-      if (Math.abs(velocityRef.current.x) < 0.03) velocityRef.current.x = 0;
-      if (Math.abs(velocityRef.current.y) < 0.03) velocityRef.current.y = 0;
-
-      ballRef.current = { x: nextX, y: nextY };
-
-      setBallX(nextX);
-      setBallY(nextY);
-
-      setIsMoving(
-        Math.abs(velocityRef.current.x) > 0 ||
-          Math.abs(velocityRef.current.y) > 0
-      );
-    }, 16);
-
-    return () => clearInterval(timer);
+    return () => clearInterval(frame);
   }, []);
+
+  const ballXPercent = (ball.x / TABLE_WIDTH) * 100;
+  const ballYPercent = (ball.y / TABLE_HEIGHT) * 100;
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#07140f] p-8">
-      <div className="relative aspect-video w-full max-w-7xl overflow-hidden rounded-[32px] border-8 border-[#4a2c12] bg-[#0b6b3a] shadow-2xl">
+      <div className="relative aspect-[1000/560] w-full max-w-7xl overflow-hidden rounded-[32px] border-8 border-[#4a2c12] bg-[#0b6b3a] shadow-2xl">
         <div className="absolute left-6 top-6 rounded-xl bg-black/30 px-4 py-3 text-white">
           <div className="text-xs uppercase text-white/60">Room</div>
           <div className="text-xl font-black">{roomPin}</div>
@@ -130,8 +162,8 @@ export default function PoolGamePage() {
           <div
             className="absolute origin-left rounded-full bg-white"
             style={{
-              left: `${ballX}%`,
-              top: `${ballY}%`,
+              left: `${ballXPercent}%`,
+              top: `${ballYPercent}%`,
               width: "220px",
               height: "4px",
               transform: `translateY(-50%) rotate(${aim}deg)`,
@@ -140,10 +172,12 @@ export default function PoolGamePage() {
         )}
 
         <div
-          className="absolute h-10 w-10 rounded-full bg-white shadow-lg"
+          className="absolute rounded-full bg-white shadow-lg"
           style={{
-            left: `${ballX}%`,
-            top: `${ballY}%`,
+            left: `${ballXPercent}%`,
+            top: `${ballYPercent}%`,
+            width: `${BALL_RADIUS * 2}px`,
+            height: `${BALL_RADIUS * 2}px`,
             transform: "translate(-50%, -50%)",
           }}
         />
