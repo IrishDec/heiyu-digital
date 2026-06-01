@@ -113,6 +113,12 @@ io.on("connection", (socket) => {
     io.to(roomPin).emit("game:aim-right");
   });
 
+  socket.on("controller:aim-angle", ({ pin, aim }) => {
+  const roomPin = cleanPin(pin);
+  console.log("AIM ANGLE", roomPin, aim);
+  io.to(roomPin).emit("game:aim-angle", { aim });
+});
+
   socket.on("controller:power", ({ pin, power }) => {
     const roomPin = cleanPin(pin);
     console.log("POWER", roomPin, power);
