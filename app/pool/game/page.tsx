@@ -20,10 +20,17 @@ export default function PoolGamePage() {
     const params = new URLSearchParams(window.location.search);
     const pin = params.get("pin") || "";
 
-    if (pin) {
-      setRoomPin(pin);
-      poolSocket.emit("tv:join-room", { pin });
-    }
+   if (pin) {
+  setRoomPin(pin);
+
+  if (poolSocket.connected) {
+    poolSocket.emit("tv:join-room", { pin });
+  }
+
+  poolSocket.on("connect", () => {
+    poolSocket.emit("tv:join-room", { pin });
+  });
+}
 
     function aimLeft() {
       aimRef.current -= 5;
@@ -63,12 +70,13 @@ export default function PoolGamePage() {
     poolSocket.on("game:power", updatePower);
     poolSocket.on("game:shoot", shoot);
 
-    return () => {
-      poolSocket.off("game:aim-left", aimLeft);
-      poolSocket.off("game:aim-right", aimRight);
-      poolSocket.off("game:power", updatePower);
-      poolSocket.off("game:shoot", shoot);
-    };
+ return () => {
+  poolSocket.off("connect");
+  poolSocket.off("game:aim-left", aimLeft);
+  poolSocket.off("game:aim-right", aimRight);
+  poolSocket.off("game:power", updatePower);
+  poolSocket.off("game:shoot", shoot);
+};
   }, []);
 
   useEffect(() => {
