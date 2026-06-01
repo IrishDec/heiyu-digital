@@ -46,13 +46,12 @@ io.on("connection", (socket) => {
       pin = createPin();
     }
 
-    const room = {
+    rooms.set(pin, {
       pin,
       tvSocketId: socket.id,
       controllerSocketId: null,
-    };
+    });
 
-    rooms.set(pin, room);
     socket.join(pin);
 
     socket.emit("tv:room-created", { pin });
@@ -62,14 +61,20 @@ io.on("connection", (socket) => {
 
   socket.on("tv:join-room", ({ pin }) => {
     const roomPin = cleanPin(pin);
-    const room = rooms.get(roomPin);
 
-    if (!room) {
-      socket.emit("tv:error", { message: "Room not found" });
+    if (!roomPin) {
+      socket.emit("tv:error", { message: "Missing room pin" });
       return;
     }
 
-    room.tvSocketId = socket.id;
+    const existingRoom = rooms.get(roomPin);
+
+    rooms.set(roomPin, {
+      pin: roomPin,
+      tvSocketId: socket.id,
+      controllerSocketId: existingRoom?.controllerSocketId || null,
+    });
+
     socket.join(roomPin);
 
     socket.emit("tv:joined-room", { pin: roomPin });
@@ -124,14 +129,13 @@ io.on("connection", (socket) => {
     console.log("Socket disconnected:", socket.id);
 
     for (const [pin, room] of rooms.entries()) {
-      if (room.tvSocketId === socket.id) {
-        rooms.delete(pin);
-        io.to(pin).emit("room:closed");
-      }
-
       if (room.controllerSocketId === socket.id) {
         room.controllerSocketId = null;
         io.to(pin).emit("tv:controller-disconnected");
+      }
+
+      if (room.tvSocketId === socket.id) {
+        room.tvSocketId = null;
       }
     }
   });
