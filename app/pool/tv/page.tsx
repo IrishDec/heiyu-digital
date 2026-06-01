@@ -1,27 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { poolSocket } from "@/lib/pool/socket";
 
 export default function PoolTvPage() {
   const [pin, setPin] = useState("----");
   const [status, setStatus] = useState("Creating TV room...");
+  const pinRef = useRef("");
 
   useEffect(() => {
     poolSocket.emit("tv:create-room");
 
-    poolSocket.on("tv:room-created", ({ pin }) => {
-      setPin(pin);
+    poolSocket.on("tv:room-created", (data: { pin: string }) => {
+      pinRef.current = data.pin;
+      setPin(data.pin);
       setStatus("Waiting for phone controller...");
     });
 
-   poolSocket.on("tv:controller-connected", () => {
-  setStatus("Phone connected. Loading game...");
+    poolSocket.on("tv:controller-connected", () => {
+      setStatus("Phone connected. Loading game...");
 
-  setTimeout(() => {
-    window.location.href = `/pool/game?pin=${pin}`;
-  }, 1200);
-});
+      setTimeout(() => {
+        window.location.href = `/pool/game?pin=${pinRef.current}`;
+      }, 1200);
+    });
 
     poolSocket.on("tv:controller-disconnected", () => {
       setStatus("Phone disconnected.");
