@@ -135,44 +135,41 @@ y: -Math.sin(radians) * force,
       socket.disconnect();
     };
   }, []);
-
-  useEffect(() => {
-    const frame = setInterval(() => {
-      const engine = engineRef.current;
-      const cueBall = cueBallRef.current;
-
-      if (!engine || !cueBall) return;
-
-     Matter.Engine.update(engine, 1000 / 120);
-     Matter.Engine.update(engine, 1000 / 120);
-
-      const speed = Math.hypot(cueBall.velocity.x, cueBall.velocity.y);
-
-      if (speed < 0.08) {
-        Matter.Body.setVelocity(cueBall, { x: 0, y: 0 });
-        Matter.Body.setAngularVelocity(cueBall, 0);
-        setIsMoving(false);
-      } else {
-        setIsMoving(true);
-      }
-
-      setBall({
-        x: cueBall.position.x,
-        y: cueBall.position.y,
-      });
-    }, 1000 / 60);
-
+useEffect(() => {
+  const frame = setInterval(() => {
+    const engine = engineRef.current;
+    const cueBall = cueBallRef.current;
     const blackBall = blackBallRef.current;
 
-if (blackBall) {
-  setBlackBall({
-    x: blackBall.position.x,
-    y: blackBall.position.y,
-  });
-}
+    if (!engine || !cueBall) return;
 
-    return () => clearInterval(frame);
-  }, []);
+    Matter.Engine.update(engine, 1000 / 60);
+
+    const speed = Math.hypot(cueBall.velocity.x, cueBall.velocity.y);
+
+    if (speed < 0.08) {
+      Matter.Body.setVelocity(cueBall, { x: 0, y: 0 });
+      Matter.Body.setAngularVelocity(cueBall, 0);
+      setIsMoving(false);
+    } else {
+      setIsMoving(true);
+    }
+
+    setBall({
+      x: cueBall.position.x,
+      y: cueBall.position.y,
+    });
+
+    if (blackBall) {
+      setBlackBall({
+        x: blackBall.position.x,
+        y: blackBall.position.y,
+      });
+    }
+  }, 1000 / 60);
+
+  return () => clearInterval(frame);
+}, []);
 
   const ballXPercent = (ball.x / TABLE_WIDTH) * 100;
   const ballYPercent = (ball.y / TABLE_HEIGHT) * 100;
