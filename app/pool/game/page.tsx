@@ -235,36 +235,14 @@ useEffect(() => {
   const ballYPercent = (ball.y / TABLE_HEIGHT) * 100;
   const blackBallXPercent = (blackBall.x / TABLE_WIDTH) * 100;
   const blackBallYPercent = (blackBall.y / TABLE_HEIGHT) * 100;
-
-  return (
-    <main className="flex min-h-screen items-center justify-center bg-[#07140f] p-8">
-      <div className="relative aspect-[1000/560] w-full max-w-7xl overflow-hidden rounded-[42px] border-[28px] border-[#5a2f12] bg-[#0b6b3a] shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
-      {/* Felt texture overlay */}
-<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.10),transparent_55%)]" />
-<div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:18px_18px] opacity-20" />
-
-{/* Inner cushion */}
-<div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,#7a421b,#3b1d0b_45%,#8a4a1f_70%,#2a1408)] opacity-95" />
-<div className="pointer-events-none absolute inset-[34px] rounded-[26px] bg-[#0b6b3a] shadow-[inset_0_18px_35px_rgba(0,0,0,0.45)]" />
-
-{/* Real cushion rails with wide pocket openings */}
-<div className="pointer-events-none absolute left-[115px] right-[585px] top-[54px] h-[26px] rounded-b-2xl bg-[#0f5a34] shadow-[0_10px_20px_rgba(0,0,0,0.45)]" />
-<div className="pointer-events-none absolute left-[585px] right-[115px] top-[54px] h-[26px] rounded-b-2xl bg-[#0f5a34] shadow-[0_10px_20px_rgba(0,0,0,0.45)]" />
-
-<div className="pointer-events-none absolute left-[115px] right-[585px] bottom-[54px] h-[26px] rounded-t-2xl bg-[#0f5a34] shadow-[0_-10px_20px_rgba(0,0,0,0.45)]" />
-<div className="pointer-events-none absolute left-[585px] right-[115px] bottom-[54px] h-[26px] rounded-t-2xl bg-[#0f5a34] shadow-[0_-10px_20px_rgba(0,0,0,0.45)]" />
-
-<div className="pointer-events-none absolute left-[54px] top-[115px] bottom-[115px] w-[26px] rounded-r-2xl bg-[#0f5a34] shadow-[10px_0_20px_rgba(0,0,0,0.45)]" />
-<div className="pointer-events-none absolute right-[54px] top-[115px] bottom-[115px] w-[26px] rounded-l-2xl bg-[#0f5a34] shadow-[-10px_0_20px_rgba(0,0,0,0.45)]" />
-
-{/* Pocket rims and holes */}
-<div className="absolute left-[18px] top-[18px] z-10 h-[76px] w-[76px] rounded-full bg-[radial-gradient(circle,#000_52%,#1f1f1f_58%,#555_65%,#111_72%)] shadow-[inset_0_8px_18px_rgba(255,255,255,0.18),0_8px_18px_rgba(0,0,0,0.55)]" />
-<div className="absolute left-1/2 top-[10px] z-10 h-[80px] w-[80px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,#000_52%,#1f1f1f_58%,#555_65%,#111_72%)] shadow-[inset_0_8px_18px_rgba(255,255,255,0.18),0_8px_18px_rgba(0,0,0,0.55)]" />
-<div className="absolute right-[18px] top-[18px] z-10 h-[76px] w-[76px] rounded-full bg-[radial-gradient(circle,#000_52%,#1f1f1f_58%,#555_65%,#111_72%)] shadow-[inset_0_8px_18px_rgba(255,255,255,0.18),0_8px_18px_rgba(0,0,0,0.55)]" />
-
-<div className="absolute bottom-[18px] left-[18px] z-10 h-[76px] w-[76px] rounded-full bg-[radial-gradient(circle,#000_52%,#1f1f1f_58%,#555_65%,#111_72%)] shadow-[inset_0_8px_18px_rgba(255,255,255,0.18),0_8px_18px_rgba(0,0,0,0.55)]" />
-<div className="absolute bottom-[10px] left-1/2 z-10 h-[80px] w-[80px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,#000_52%,#1f1f1f_58%,#555_65%,#111_72%)] shadow-[inset_0_8px_18px_rgba(255,255,255,0.18),0_8px_18px_rgba(0,0,0,0.55)]" />
-<div className="absolute bottom-[18px] right-[18px] z-10 h-[76px] w-[76px] rounded-full bg-[radial-gradient(circle,#000_52%,#1f1f1f_58%,#555_65%,#111_72%)] shadow-[inset_0_8px_18px_rgba(255,255,255,0.18),0_8px_18px_rgba(0,0,0,0.55)]" />
+return (
+  <main className="flex min-h-screen items-center justify-center bg-[#07140f] p-8">
+   <div className="relative aspect-[2/1] w-[96vw] max-w-[1800px] overflow-hidden rounded-[28px] shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
+      <img
+        src="/pool/table-bg.jpg"
+        alt=""
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-fill"
+      />
 <button
   type="button"
   onClick={() => {
