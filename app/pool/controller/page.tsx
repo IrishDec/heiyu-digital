@@ -8,6 +8,7 @@ export default function PoolControllerPage() {
   const [status, setStatus] = useState("Enter the 4-digit PIN shown on the TV.");
   const [paired, setPaired] = useState(false);
   const [power, setPower] = useState(50);
+  const [aim, setAim] = useState(0);
 
   function joinRoom() {
     const cleanPin = pin.replace(/\D/g, "").slice(0, 4);
@@ -41,6 +42,25 @@ export default function PoolControllerPage() {
     poolSocket.emit("controller:aim-right", { pin });
   }
 
+  function handleAimTouch(event: React.PointerEvent<HTMLDivElement>) {
+  const rect = event.currentTarget.getBoundingClientRect();
+
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+
+  const x = event.clientX - centerX;
+  const y = event.clientY - centerY;
+
+  const angle = Math.round((Math.atan2(y, x) * 180) / Math.PI);
+
+  setAim(angle);
+
+  poolSocket.emit("controller:aim-angle", {
+    pin,
+    aim: angle,
+  });
+}
+
   function sendPower(nextPower: number) {
     setPower(nextPower);
 
@@ -66,23 +86,28 @@ export default function PoolControllerPage() {
             Cue Controller
           </h1>
 
-          <div className="grid grid-cols-2 gap-4">
-            <button
-              type="button"
-              onClick={sendAimLeft}
-              className="rounded-2xl bg-white/10 p-8 text-xl font-bold active:bg-emerald-400 active:text-[#07140f]"
-            >
-              ◀ Aim Left
-            </button>
+         <div
+  onPointerDown={handleAimTouch}
+  onPointerMove={(event) => {
+    if (event.buttons === 1) {
+      handleAimTouch(event);
+    }
+  }}
+  className="relative mx-auto flex h-64 w-64 touch-none items-center justify-center rounded-full border border-white/15 bg-white/10"
+>
+  <div className="absolute h-3 w-3 rounded-full bg-emerald-400" />
 
-            <button
-              type="button"
-              onClick={sendAimRight}
-              className="rounded-2xl bg-white/10 p-8 text-xl font-bold active:bg-emerald-400 active:text-[#07140f]"
-            >
-              Aim Right ▶
-            </button>
-          </div>
+  <div
+    className="absolute left-1/2 top-1/2 h-1 w-24 origin-left rounded-full bg-emerald-400"
+    style={{
+      transform: `translateY(-50%) rotate(${aim}deg)`,
+    }}
+  />
+
+  <p className="absolute bottom-6 text-sm font-bold text-white/60">
+    Drag to aim
+  </p>
+</div>
 
           <div className="mt-6 rounded-2xl bg-white/10 p-5">
             <label className="mb-3 block text-sm font-bold text-white/70">
