@@ -110,6 +110,11 @@ Matter.World.add(engine.world, [
       setAim(aimRef.current);
     });
 
+    socket.on("game:aim-angle", (data: { aim: number }) => {
+  aimRef.current = data.aim;
+  setAim(data.aim);
+});
+
     socket.on("game:power", (data: { power: number }) => {
       powerRef.current = data.power;
       setPower(data.power);
