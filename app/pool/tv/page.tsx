@@ -15,9 +15,13 @@ export default function PoolTvPage() {
       setStatus("Waiting for phone controller...");
     });
 
-    poolSocket.on("tv:controller-connected", () => {
-      setStatus("Phone connected. Ready to play.");
-    });
+   poolSocket.on("tv:controller-connected", () => {
+  setStatus("Phone connected. Loading game...");
+
+  setTimeout(() => {
+    window.location.href = `/pool/game?pin=${pin}`;
+  }, 1200);
+});
 
     poolSocket.on("tv:controller-disconnected", () => {
       setStatus("Phone disconnected.");
