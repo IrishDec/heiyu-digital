@@ -60,7 +60,8 @@ export default function PoolGamePage() {
     restitution: 0.92,
     friction: 0,
     frictionAir: 0.006,
-    density: 0.004,
+    density: 0.001,
+    inertia: Infinity,
   }
 );
 
