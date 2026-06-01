@@ -96,11 +96,11 @@ export default function PoolGamePage() {
       if (speed > 0.15) return;
 
       const radians = (aimRef.current * Math.PI) / 180;
-      const force = Math.max(0.002, powerRef.current * 0.00008);
+      const force = Math.max(0.006, powerRef.current * 0.00022);
 
       Matter.Body.applyForce(cueBall, cueBall.position, {
-        x: Math.cos(radians) * force,
-        y: Math.sin(radians) * force,
+        x: -Math.cos(radians) * force,
+y: -Math.sin(radians) * force,
       });
     });
 
