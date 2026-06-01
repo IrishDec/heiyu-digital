@@ -72,6 +72,7 @@ export default function PoolGamePage() {
     };
   }, []);
 
+
   useEffect(() => {
     const timer = setInterval(() => {
       let nextX = ballRef.current.x + velocityRef.current.x;
