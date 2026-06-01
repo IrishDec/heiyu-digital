@@ -88,36 +88,35 @@ io.on("connection", (socket) => {
       return;
     }
 
-    room.controllerSocketId = socket.id;
-    socket.join(cleanPin);
+socket.emit("controller:joined", {
+  pin: cleanPin,
+});
 
-    io.to(room.tvSocketId).emit("tv:controller-connected");
+console.log("Controller joined:", cleanPin);
+});
 
-    socket.emit("controller:joined", {
-      pin: cleanPin,
-    });
+socket.on("controller:aim-left", ({ pin }) => {
+console.log("AIM LEFT", pin);
+io.to(pin).emit("game:aim-left");
+});
 
-    console.log("Controller joined:", cleanPin);
-  });
+socket.on("controller:aim-right", ({ pin }) => {
+console.log("AIM RIGHT", pin);
+io.to(pin).emit("game:aim-right");
+});
 
-  socket.on("controller:aim-left", ({ pin }) => {
-    io.to(pin).emit("game:aim-left");
-  });
+socket.on("controller:power", ({ pin, power }) => {
+console.log("POWER", pin, power);
+io.to(pin).emit("game:power", { power });
+});
 
-  socket.on("controller:aim-right", ({ pin }) => {
-    io.to(pin).emit("game:aim-right");
-  });
+socket.on("controller:shoot", ({ pin }) => {
+console.log("SHOOT", pin);
+io.to(pin).emit("game:shoot");
+});
 
-  socket.on("controller:power", ({ pin, power }) => {
-    io.to(pin).emit("game:power", { power });
-  });
-
-  socket.on("controller:shoot", ({ pin }) => {
-    io.to(pin).emit("game:shoot");
-  });
-
-  socket.on("disconnect", () => {
-    console.log("Socket disconnected:", socket.id);
+socket.on("disconnect", () => {
+console.log("Socket disconnected:", socket.id);
 
     for (const [pin, room] of rooms.entries()) {
       if (room.tvSocketId === socket.id) {
