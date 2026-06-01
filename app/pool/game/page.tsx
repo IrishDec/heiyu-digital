@@ -10,15 +10,15 @@ const TABLE_WIDTH = 1000;
 const TABLE_HEIGHT = 560;
 const BALL_RADIUS = 16;
 
-const POCKET_RADIUS = 34;
+const POCKET_RADIUS = 52;
 
 const POCKETS = [
-  { x: 38, y: 38 },
-  { x: TABLE_WIDTH / 2, y: 28 },
-  { x: TABLE_WIDTH - 38, y: 38 },
-  { x: 38, y: TABLE_HEIGHT - 38 },
-  { x: TABLE_WIDTH / 2, y: TABLE_HEIGHT - 28 },
-  { x: TABLE_WIDTH - 38, y: TABLE_HEIGHT - 38 },
+  { x: 78, y: 78 },
+  { x: TABLE_WIDTH / 2, y: 64 },
+  { x: TABLE_WIDTH - 78, y: 78 },
+  { x: 78, y: TABLE_HEIGHT - 78 },
+  { x: TABLE_WIDTH / 2, y: TABLE_HEIGHT - 64 },
+  { x: TABLE_WIDTH - 78, y: TABLE_HEIGHT - 78 },
 ];
 
 export default function PoolGamePage() {
