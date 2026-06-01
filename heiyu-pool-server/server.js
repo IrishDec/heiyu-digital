@@ -32,6 +32,10 @@ function createPin() {
   return String(Math.floor(1000 + Math.random() * 9000));
 }
 
+function cleanPin(pin) {
+  return String(pin || "").replace(/\D/g, "").slice(0, 4);
+}
+
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);
 
@@ -57,66 +61,67 @@ io.on("connection", (socket) => {
   });
 
   socket.on("tv:join-room", ({ pin }) => {
-  const cleanPin = String(pin || "").replace(/\D/g, "").slice(0, 4);
-  const room = rooms.get(cleanPin);
-
-  if (!room) {
-    socket.emit("tv:error", {
-      message: "Room not found",
-    });
-    return;
-  }
-
-  room.tvSocketId = socket.id;
-  socket.join(cleanPin);
-
-  socket.emit("tv:joined-room", {
-    pin: cleanPin,
-  });
-
-  console.log("TV joined existing game room:", cleanPin);
-});
-
-  socket.on("controller:join-room", ({ pin }) => {
-    const cleanPin = String(pin || "").replace(/\D/g, "").slice(0, 4);
-    const room = rooms.get(cleanPin);
+    const roomPin = cleanPin(pin);
+    const room = rooms.get(roomPin);
 
     if (!room) {
-      socket.emit("controller:error", {
-        message: "Room not found",
-      });
+      socket.emit("tv:error", { message: "Room not found" });
       return;
     }
 
-socket.emit("controller:joined", {
-  pin: cleanPin,
-});
+    room.tvSocketId = socket.id;
+    socket.join(roomPin);
 
-console.log("Controller joined:", cleanPin);
-});
+    socket.emit("tv:joined-room", { pin: roomPin });
 
-socket.on("controller:aim-left", ({ pin }) => {
-console.log("AIM LEFT", pin);
-io.to(pin).emit("game:aim-left");
-});
+    console.log("TV joined existing game room:", roomPin);
+  });
 
-socket.on("controller:aim-right", ({ pin }) => {
-console.log("AIM RIGHT", pin);
-io.to(pin).emit("game:aim-right");
-});
+  socket.on("controller:join-room", ({ pin }) => {
+    const roomPin = cleanPin(pin);
+    const room = rooms.get(roomPin);
 
-socket.on("controller:power", ({ pin, power }) => {
-console.log("POWER", pin, power);
-io.to(pin).emit("game:power", { power });
-});
+    if (!room) {
+      socket.emit("controller:error", { message: "Room not found" });
+      return;
+    }
 
-socket.on("controller:shoot", ({ pin }) => {
-console.log("SHOOT", pin);
-io.to(pin).emit("game:shoot");
-});
+    room.controllerSocketId = socket.id;
+    socket.join(roomPin);
 
-socket.on("disconnect", () => {
-console.log("Socket disconnected:", socket.id);
+    io.to(roomPin).emit("tv:controller-connected");
+
+    socket.emit("controller:joined", { pin: roomPin });
+
+    console.log("Controller joined:", roomPin);
+  });
+
+  socket.on("controller:aim-left", ({ pin }) => {
+    const roomPin = cleanPin(pin);
+    console.log("AIM LEFT", roomPin);
+    io.to(roomPin).emit("game:aim-left");
+  });
+
+  socket.on("controller:aim-right", ({ pin }) => {
+    const roomPin = cleanPin(pin);
+    console.log("AIM RIGHT", roomPin);
+    io.to(roomPin).emit("game:aim-right");
+  });
+
+  socket.on("controller:power", ({ pin, power }) => {
+    const roomPin = cleanPin(pin);
+    console.log("POWER", roomPin, power);
+    io.to(roomPin).emit("game:power", { power });
+  });
+
+  socket.on("controller:shoot", ({ pin }) => {
+    const roomPin = cleanPin(pin);
+    console.log("SHOOT", roomPin);
+    io.to(roomPin).emit("game:shoot");
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Socket disconnected:", socket.id);
 
     for (const [pin, room] of rooms.entries()) {
       if (room.tvSocketId === socket.id) {
@@ -126,7 +131,7 @@ console.log("Socket disconnected:", socket.id);
 
       if (room.controllerSocketId === socket.id) {
         room.controllerSocketId = null;
-        io.to(room.tvSocketId).emit("tv:controller-disconnected");
+        io.to(pin).emit("tv:controller-disconnected");
       }
     }
   });
@@ -134,4 +139,4 @@ console.log("Socket disconnected:", socket.id);
 
 server.listen(PORT, () => {
   console.log(`Heiyu Pool Socket Server running on port ${PORT}`);
-});server.js
+});
