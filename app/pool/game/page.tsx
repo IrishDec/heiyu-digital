@@ -15,7 +15,7 @@ export default function PoolGamePage() {
   const [power, setPower] = useState(50);
   const [ball, setBall] = useState({ x: TABLE_WIDTH / 2, y: TABLE_HEIGHT / 2 });
   const [blackBall, setBlackBall] = useState({
-  x: TABLE_WIDTH / 2 + 140,
+  x: TABLE_WIDTH / 2 + 220,
   y: TABLE_HEIGHT / 2,
 });
   const [isMoving, setIsMoving] = useState(false);
@@ -53,7 +53,7 @@ export default function PoolGamePage() {
     });
 
     const blackBall = Matter.Bodies.circle(
-  TABLE_WIDTH / 2 + 140,
+  TABLE_WIDTH / 2 + 220,
   TABLE_HEIGHT / 2,
   BALL_RADIUS,
   {
