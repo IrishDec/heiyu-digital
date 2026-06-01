@@ -6,6 +6,7 @@ type ControlState = {
   aim: number;
   power: number;
   lastAction: string;
+  shotId: number;
   updatedAt: string;
 };
 
@@ -16,7 +17,7 @@ export default function PoolGamePage() {
   const [ballY, setBallY] = useState(50);
 
   const velocityRef = useRef({ x: 0, y: 0 });
-  const lastShotRef = useRef("");
+  const lastShotRef = useRef(0);
 
   useEffect(() => {
     const poll = setInterval(async () => {
@@ -28,11 +29,11 @@ export default function PoolGamePage() {
         setAim(control.aim);
         setPower(control.power);
 
-        if (
-          control.lastAction === "shoot" &&
-          control.updatedAt !== lastShotRef.current
-        ) {
-          lastShotRef.current = control.updatedAt;
+    if (
+  control.lastAction === "shoot" &&
+  control.shotId !== lastShotRef.current
+) {
+  lastShotRef.current = control.shotId;
 
           const radians = (control.aim * Math.PI) / 180;
           const speed = Math.max(1.2, control.power * 0.05);
