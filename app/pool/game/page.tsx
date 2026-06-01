@@ -56,33 +56,33 @@ export default function PoolGamePage() {
 
 const topWall = Matter.Bodies.rectangle(
   TABLE_WIDTH / 2,
-  cushionInset,
-  TABLE_WIDTH,
-  28,
+  82,
+  TABLE_WIDTH - 150,
+  30,
   wallOptions
 );
 
 const bottomWall = Matter.Bodies.rectangle(
   TABLE_WIDTH / 2,
-  TABLE_HEIGHT - cushionInset,
-  TABLE_WIDTH,
-  28,
+  TABLE_HEIGHT - 82,
+  TABLE_WIDTH - 150,
+  30,
   wallOptions
 );
 
 const leftWall = Matter.Bodies.rectangle(
-  cushionInset,
+  82,
   TABLE_HEIGHT / 2,
-  28,
-  TABLE_HEIGHT,
+  30,
+  TABLE_HEIGHT - 150,
   wallOptions
 );
 
 const rightWall = Matter.Bodies.rectangle(
-  TABLE_WIDTH - cushionInset,
+  TABLE_WIDTH - 82,
   TABLE_HEIGHT / 2,
-  28,
-  TABLE_HEIGHT,
+  30,
+  TABLE_HEIGHT - 150,
   wallOptions
 );
 
