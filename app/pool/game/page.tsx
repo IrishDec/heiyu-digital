@@ -1,9 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { poolSocket } from "@/lib/pool/socket";
 
-export default function PoolGamePage() {
+function PoolGameInner() {
+  const searchParams = useSearchParams();
+  const pin = searchParams.get("pin");
+
   const [aim, setAim] = useState(0);
   const [power, setPower] = useState(50);
   const [ballX, setBallX] = useState(50);
@@ -16,7 +20,11 @@ export default function PoolGamePage() {
   const powerRef = useRef(50);
 
   useEffect(() => {
-   function aimLeft() {
+    if (pin) {
+      poolSocket.emit("tv:join-room", { pin });
+    }
+
+    function aimLeft() {
       aimRef.current -= 5;
       setAim(aimRef.current);
     }
@@ -60,7 +68,8 @@ export default function PoolGamePage() {
       poolSocket.off("game:power", updatePower);
       poolSocket.off("game:shoot", shoot);
     };
- }, []);
+  }, [pin]);
+
   useEffect(() => {
     const timer = setInterval(() => {
       let nextX = ballRef.current.x + velocityRef.current.x;
@@ -82,10 +91,7 @@ export default function PoolGamePage() {
       if (Math.abs(velocityRef.current.x) < 0.03) velocityRef.current.x = 0;
       if (Math.abs(velocityRef.current.y) < 0.03) velocityRef.current.y = 0;
 
-      ballRef.current = {
-        x: nextX,
-        y: nextY,
-      };
+      ballRef.current = { x: nextX, y: nextY };
 
       setBallX(nextX);
       setBallY(nextY);
@@ -103,14 +109,11 @@ export default function PoolGamePage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#07140f] p-8">
       <div className="relative aspect-video w-full max-w-7xl overflow-hidden rounded-[32px] border-8 border-[#4a2c12] bg-[#0b6b3a] shadow-2xl">
-
         <div className="absolute left-6 top-6 rounded-xl bg-black/30 px-4 py-3 text-white">
           <div className="text-xs uppercase text-white/60">Aim</div>
           <div className="text-3xl font-black">{aim}°</div>
-
           <div className="mt-2 text-xs uppercase text-white/60">Power</div>
           <div className="text-2xl font-black">{power}%</div>
-
           <div className="mt-2 text-xs text-white/60">
             {isMoving ? "Ball moving" : "Ready"}
           </div>
@@ -139,5 +142,13 @@ export default function PoolGamePage() {
         />
       </div>
     </main>
+  );
+}
+
+export default function PoolGamePage() {
+  return (
+    <Suspense fallback={null}>
+      <PoolGameInner />
+    </Suspense>
   );
 }
