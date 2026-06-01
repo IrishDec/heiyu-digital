@@ -14,11 +14,16 @@ export default function PoolGamePage() {
   const [aim, setAim] = useState(0);
   const [power, setPower] = useState(50);
   const [ball, setBall] = useState({ x: TABLE_WIDTH / 2, y: TABLE_HEIGHT / 2 });
+  const [blackBall, setBlackBall] = useState({
+  x: TABLE_WIDTH / 2 + 140,
+  y: TABLE_HEIGHT / 2,
+});
   const [isMoving, setIsMoving] = useState(false);
   const [roomPin, setRoomPin] = useState("----");
 
   const engineRef = useRef<Matter.Engine | null>(null);
   const cueBallRef = useRef<Matter.Body | null>(null);
+  const blackBallRef = useRef<Matter.Body | null>(null);
   const aimRef = useRef(0);
   const powerRef = useRef(50);
 
@@ -47,9 +52,30 @@ export default function PoolGamePage() {
       density: 0.004,
     });
 
+    const blackBall = Matter.Bodies.circle(
+  TABLE_WIDTH / 2 + 140,
+  TABLE_HEIGHT / 2,
+  BALL_RADIUS,
+  {
+    restitution: 0.92,
+    friction: 0,
+    frictionAir: 0.006,
+    density: 0.004,
+  }
+);
+
+blackBallRef.current = blackBall;
+
     cueBallRef.current = cueBall;
 
-    Matter.World.add(engine.world, [topWall, bottomWall, leftWall, rightWall, cueBall]);
+Matter.World.add(engine.world, [
+  topWall,
+  bottomWall,
+  leftWall,
+  rightWall,
+  cueBall,
+  blackBall,
+]);
 
     return () => {
       Matter.World.clear(engine.world, false);
@@ -134,11 +160,22 @@ y: -Math.sin(radians) * force,
       });
     }, 1000 / 60);
 
+    const blackBall = blackBallRef.current;
+
+if (blackBall) {
+  setBlackBall({
+    x: blackBall.position.x,
+    y: blackBall.position.y,
+  });
+}
+
     return () => clearInterval(frame);
   }, []);
 
   const ballXPercent = (ball.x / TABLE_WIDTH) * 100;
   const ballYPercent = (ball.y / TABLE_HEIGHT) * 100;
+  const blackBallXPercent = (blackBall.x / TABLE_WIDTH) * 100;
+  const blackBallYPercent = (blackBall.y / TABLE_HEIGHT) * 100;
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#07140f] p-8">
@@ -181,7 +218,19 @@ y: -Math.sin(radians) * force,
             transform: "translate(-50%, -50%)",
           }}
         />
+        <div
+  className="absolute rounded-full bg-black shadow-lg ring-2 ring-white/20"
+  style={{
+    left: `${blackBallXPercent}%`,
+    top: `${blackBallYPercent}%`,
+    width: `${BALL_RADIUS * 2}px`,
+    height: `${BALL_RADIUS * 2}px`,
+    transform: "translate(-50%, -50%)",
+  }}
+/>
       </div>
+
+
     </main>
   );
 }
