@@ -143,7 +143,8 @@ y: -Math.sin(radians) * force,
 
       if (!engine || !cueBall) return;
 
-      Matter.Engine.update(engine, 1000 / 60);
+     Matter.Engine.update(engine, 1000 / 120);
+     Matter.Engine.update(engine, 1000 / 120);
 
       const speed = Math.hypot(cueBall.velocity.x, cueBall.velocity.y);
 
