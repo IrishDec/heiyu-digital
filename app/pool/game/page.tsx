@@ -246,23 +246,25 @@ useEffect(() => {
 {/* Inner cushion */}
 <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,#7a421b,#3b1d0b_45%,#8a4a1f_70%,#2a1408)] opacity-95" />
 <div className="pointer-events-none absolute inset-[34px] rounded-[26px] bg-[#0b6b3a] shadow-[inset_0_18px_35px_rgba(0,0,0,0.45)]" />
-{/* Real cushion rails with pocket openings */}
-<div className="pointer-events-none absolute left-[86px] right-[540px] top-[52px] h-[22px] rounded-b-xl bg-[#0f5a34] shadow-[0_8px_18px_rgba(0,0,0,0.35)]" />
-<div className="pointer-events-none absolute left-[540px] right-[86px] top-[52px] h-[22px] rounded-b-xl bg-[#0f5a34] shadow-[0_8px_18px_rgba(0,0,0,0.35)]" />
 
-<div className="pointer-events-none absolute left-[86px] right-[540px] bottom-[52px] h-[22px] rounded-t-xl bg-[#0f5a34] shadow-[0_-8px_18px_rgba(0,0,0,0.35)]" />
-<div className="pointer-events-none absolute left-[540px] right-[86px] bottom-[52px] h-[22px] rounded-t-xl bg-[#0f5a34] shadow-[0_-8px_18px_rgba(0,0,0,0.35)]" />
+{/* Real cushion rails with wide pocket openings */}
+<div className="pointer-events-none absolute left-[115px] right-[585px] top-[54px] h-[26px] rounded-b-2xl bg-[#0f5a34] shadow-[0_10px_20px_rgba(0,0,0,0.45)]" />
+<div className="pointer-events-none absolute left-[585px] right-[115px] top-[54px] h-[26px] rounded-b-2xl bg-[#0f5a34] shadow-[0_10px_20px_rgba(0,0,0,0.45)]" />
 
-<div className="pointer-events-none absolute left-[52px] top-[86px] bottom-[86px] w-[22px] rounded-r-xl bg-[#0f5a34] shadow-[8px_0_18px_rgba(0,0,0,0.35)]" />
-<div className="pointer-events-none absolute right-[52px] top-[86px] bottom-[86px] w-[22px] rounded-l-xl bg-[#0f5a34] shadow-[-8px_0_18px_rgba(0,0,0,0.35)]" />
-      {/* Pockets */}
-<div className="absolute left-3 top-3 h-14 w-14 rounded-full bg-black shadow-inner" />
-<div className="absolute left-1/2 top-2 h-14 w-14 -translate-x-1/2 rounded-full bg-black shadow-inner" />
-<div className="absolute right-3 top-3 h-14 w-14 rounded-full bg-black shadow-inner" />
+<div className="pointer-events-none absolute left-[115px] right-[585px] bottom-[54px] h-[26px] rounded-t-2xl bg-[#0f5a34] shadow-[0_-10px_20px_rgba(0,0,0,0.45)]" />
+<div className="pointer-events-none absolute left-[585px] right-[115px] bottom-[54px] h-[26px] rounded-t-2xl bg-[#0f5a34] shadow-[0_-10px_20px_rgba(0,0,0,0.45)]" />
 
-<div className="absolute bottom-3 left-3 h-14 w-14 rounded-full bg-black shadow-inner" />
-<div className="absolute bottom-2 left-1/2 h-14 w-14 -translate-x-1/2 rounded-full bg-black shadow-inner" />
-<div className="absolute bottom-3 right-3 h-14 w-14 rounded-full bg-black shadow-inner" />
+<div className="pointer-events-none absolute left-[54px] top-[115px] bottom-[115px] w-[26px] rounded-r-2xl bg-[#0f5a34] shadow-[10px_0_20px_rgba(0,0,0,0.45)]" />
+<div className="pointer-events-none absolute right-[54px] top-[115px] bottom-[115px] w-[26px] rounded-l-2xl bg-[#0f5a34] shadow-[-10px_0_20px_rgba(0,0,0,0.45)]" />
+
+{/* Pocket rims and holes */}
+<div className="absolute left-[18px] top-[18px] z-10 h-[76px] w-[76px] rounded-full bg-[radial-gradient(circle,#000_52%,#1f1f1f_58%,#555_65%,#111_72%)] shadow-[inset_0_8px_18px_rgba(255,255,255,0.18),0_8px_18px_rgba(0,0,0,0.55)]" />
+<div className="absolute left-1/2 top-[10px] z-10 h-[80px] w-[80px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,#000_52%,#1f1f1f_58%,#555_65%,#111_72%)] shadow-[inset_0_8px_18px_rgba(255,255,255,0.18),0_8px_18px_rgba(0,0,0,0.55)]" />
+<div className="absolute right-[18px] top-[18px] z-10 h-[76px] w-[76px] rounded-full bg-[radial-gradient(circle,#000_52%,#1f1f1f_58%,#555_65%,#111_72%)] shadow-[inset_0_8px_18px_rgba(255,255,255,0.18),0_8px_18px_rgba(0,0,0,0.55)]" />
+
+<div className="absolute bottom-[18px] left-[18px] z-10 h-[76px] w-[76px] rounded-full bg-[radial-gradient(circle,#000_52%,#1f1f1f_58%,#555_65%,#111_72%)] shadow-[inset_0_8px_18px_rgba(255,255,255,0.18),0_8px_18px_rgba(0,0,0,0.55)]" />
+<div className="absolute bottom-[10px] left-1/2 z-10 h-[80px] w-[80px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,#000_52%,#1f1f1f_58%,#555_65%,#111_72%)] shadow-[inset_0_8px_18px_rgba(255,255,255,0.18),0_8px_18px_rgba(0,0,0,0.55)]" />
+<div className="absolute bottom-[18px] right-[18px] z-10 h-[76px] w-[76px] rounded-full bg-[radial-gradient(circle,#000_52%,#1f1f1f_58%,#555_65%,#111_72%)] shadow-[inset_0_8px_18px_rgba(255,255,255,0.18),0_8px_18px_rgba(0,0,0,0.55)]" />
 <button
   type="button"
   onClick={() => {
