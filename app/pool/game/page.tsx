@@ -179,6 +179,23 @@ useEffect(() => {
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#07140f] p-8">
       <div className="relative aspect-[1000/560] w-full max-w-7xl overflow-hidden rounded-[32px] border-8 border-[#4a2c12] bg-[#0b6b3a] shadow-2xl">
+      {/* Pockets */}
+<div className="absolute left-3 top-3 h-14 w-14 rounded-full bg-black shadow-inner" />
+<div className="absolute left-1/2 top-2 h-14 w-14 -translate-x-1/2 rounded-full bg-black shadow-inner" />
+<div className="absolute right-3 top-3 h-14 w-14 rounded-full bg-black shadow-inner" />
+
+<div className="absolute bottom-3 left-3 h-14 w-14 rounded-full bg-black shadow-inner" />
+<div className="absolute bottom-2 left-1/2 h-14 w-14 -translate-x-1/2 rounded-full bg-black shadow-inner" />
+<div className="absolute bottom-3 right-3 h-14 w-14 rounded-full bg-black shadow-inner" />
+<button
+  type="button"
+  onClick={() => {
+    window.location.href = "/pool/tv";
+  }}
+  className="absolute right-6 top-6 z-20 rounded-2xl bg-white/90 px-6 py-4 text-xl font-black text-[#07140f] shadow-lg hover:bg-white"
+>
+  New Game
+</button>
         <div className="absolute left-6 top-6 rounded-xl bg-black/30 px-4 py-3 text-white">
           <div className="text-xs uppercase text-white/60">Room</div>
           <div className="text-xl font-black">{roomPin}</div>
