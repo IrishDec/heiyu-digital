@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { poolSocket } from "@/lib/pool/socket";
+import { io } from "socket.io-client";
+
+const SOCKET_URL = "https://heiyu-pool-server.onrender.com";
 
 export default function PoolGamePage() {
   const [aim, setAim] = useState(0);
@@ -9,7 +11,7 @@ export default function PoolGamePage() {
   const [ballX, setBallX] = useState(50);
   const [ballY, setBallY] = useState(50);
   const [isMoving, setIsMoving] = useState(false);
-  const [roomPin, setRoomPin] = useState("");
+  const [roomPin, setRoomPin] = useState("----");
 
   const velocityRef = useRef({ x: 0, y: 0 });
   const ballRef = useRef({ x: 50, y: 50 });
@@ -20,34 +22,34 @@ export default function PoolGamePage() {
     const params = new URLSearchParams(window.location.search);
     const pin = params.get("pin") || "";
 
-   if (pin) {
-  setRoomPin(pin);
+    setRoomPin(pin || "----");
 
-  if (poolSocket.connected) {
-    poolSocket.emit("tv:join-room", { pin });
-  }
+    const socket = io(SOCKET_URL, {
+      transports: ["websocket", "polling"],
+    });
 
-  poolSocket.on("connect", () => {
-    poolSocket.emit("tv:join-room", { pin });
-  });
-}
+    socket.on("connect", () => {
+      if (pin) {
+        socket.emit("tv:join-room", { pin });
+      }
+    });
 
-    function aimLeft() {
+    socket.on("game:aim-left", () => {
       aimRef.current -= 5;
       setAim(aimRef.current);
-    }
+    });
 
-    function aimRight() {
+    socket.on("game:aim-right", () => {
       aimRef.current += 5;
       setAim(aimRef.current);
-    }
+    });
 
-    function updatePower(data: { power: number }) {
+    socket.on("game:power", (data: { power: number }) => {
       powerRef.current = data.power;
       setPower(data.power);
-    }
+    });
 
-    function shoot() {
+    socket.on("game:shoot", () => {
       const moving =
         Math.abs(velocityRef.current.x) > 0 ||
         Math.abs(velocityRef.current.y) > 0;
@@ -63,20 +65,11 @@ export default function PoolGamePage() {
       };
 
       setIsMoving(true);
-    }
+    });
 
-    poolSocket.on("game:aim-left", aimLeft);
-    poolSocket.on("game:aim-right", aimRight);
-    poolSocket.on("game:power", updatePower);
-    poolSocket.on("game:shoot", shoot);
-
- return () => {
-  poolSocket.off("connect");
-  poolSocket.off("game:aim-left", aimLeft);
-  poolSocket.off("game:aim-right", aimRight);
-  poolSocket.off("game:power", updatePower);
-  poolSocket.off("game:shoot", shoot);
-};
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -105,11 +98,10 @@ export default function PoolGamePage() {
       setBallX(nextX);
       setBallY(nextY);
 
-      const stillMoving =
+      setIsMoving(
         Math.abs(velocityRef.current.x) > 0 ||
-        Math.abs(velocityRef.current.y) > 0;
-
-      setIsMoving(stillMoving);
+          Math.abs(velocityRef.current.y) > 0
+      );
     }, 16);
 
     return () => clearInterval(timer);
@@ -120,7 +112,7 @@ export default function PoolGamePage() {
       <div className="relative aspect-video w-full max-w-7xl overflow-hidden rounded-[32px] border-8 border-[#4a2c12] bg-[#0b6b3a] shadow-2xl">
         <div className="absolute left-6 top-6 rounded-xl bg-black/30 px-4 py-3 text-white">
           <div className="text-xs uppercase text-white/60">Room</div>
-          <div className="text-xl font-black">{roomPin || "----"}</div>
+          <div className="text-xl font-black">{roomPin}</div>
 
           <div className="mt-2 text-xs uppercase text-white/60">Aim</div>
           <div className="text-3xl font-black">{aim}°</div>
