@@ -4,6 +4,7 @@ type PoolControlState = {
   aim: number;
   power: number;
   lastAction: string;
+  shotId: number;
   updatedAt: string;
 };
 
@@ -17,6 +18,7 @@ function getControlState() {
       aim: 0,
       power: 50,
       lastAction: "none",
+      shotId: 0,
       updatedAt: new Date().toISOString(),
     };
   }
@@ -54,6 +56,7 @@ export async function POST(request: Request) {
   }
 
   if (action === "shoot") {
+    control.shotId += 1;
     control.lastAction = "shoot";
   }
 
