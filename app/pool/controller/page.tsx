@@ -7,7 +7,7 @@ export default function PoolControllerPage() {
   const [pin, setPin] = useState("");
   const [status, setStatus] = useState("Enter the 4-digit PIN shown on the TV.");
   const [paired, setPaired] = useState(false);
-  const [power, setPower] = useState(50);
+ const [power, setPower] = useState(80);
   const [aim, setAim] = useState(0);
 
   function joinRoom() {

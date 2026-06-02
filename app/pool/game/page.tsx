@@ -10,6 +10,18 @@ const TABLE_WIDTH = 1000;
 const TABLE_HEIGHT = 560;
 const BALL_RADIUS = 16;
 
+type PoolBallType = "solid" | "stripe" | "black";
+
+type PoolBall = {
+  id: number;
+  number: number;
+  type: PoolBallType;
+  color: string;
+  x: number;
+  y: number;
+  potted: boolean;
+};
+
 const POCKET_RADIUS = 48;
 
 const POCKETS = [
@@ -21,10 +33,73 @@ const POCKETS = [
   { x: TABLE_WIDTH - 92, y: TABLE_HEIGHT - 86 },
 ];
 
+const createRackBalls = (): PoolBall[] => {
+const startX = TABLE_WIDTH / 2 + 150;
+const startY = TABLE_HEIGHT / 2;
+const ballGap = BALL_RADIUS * 2.02;
+const gapX = ballGap * 0.866;
+const gapY = ballGap;
+
+  const rack = [
+    [1],
+    [9, 2],
+    [3, 8, 10],
+    [11, 4, 12, 5],
+    [6, 13, 7, 14, 15],
+  ];
+
+  const colors: Record<number, string> = {
+    1: "#facc15",
+    2: "#2563eb",
+    3: "#dc2626",
+    4: "#7c3aed",
+    5: "#f97316",
+    6: "#16a34a",
+    7: "#7f1d1d",
+    8: "#000000",
+    9: "#facc15",
+    10: "#2563eb",
+    11: "#dc2626",
+    12: "#7c3aed",
+    13: "#f97316",
+    14: "#16a34a",
+    15: "#7f1d1d",
+  };
+
+  const balls: PoolBall[] = [];
+
+  rack.forEach((row, rowIndex) => {
+    row.forEach((number, colIndex) => {
+    const x = startX + rowIndex * gapX;
+const y =
+  startY -
+  ((row.length - 1) * gapY) / 2 +
+  colIndex * gapY;
+
+      balls.push({
+        id: number,
+        number,
+        type:
+          number === 8
+            ? "black"
+            : number <= 7
+              ? "solid"
+              : "stripe",
+        color: colors[number],
+        x,
+        y,
+        potted: false,
+      });
+    });
+  });
+
+  return balls;
+};
+
 export default function PoolGamePage() {
   const [aim, setAim] = useState(0);
-  const [power, setPower] = useState(50);
-  const [ball, setBall] = useState({ x: TABLE_WIDTH / 2, y: TABLE_HEIGHT / 2 });
+  const [power, setPower] = useState(80);
+ const [ball, setBall] = useState({ x: TABLE_WIDTH * 0.28, y: TABLE_HEIGHT / 2 });
   const [blackBall, setBlackBall] = useState({
   x: TABLE_WIDTH / 2 + 220,
   y: TABLE_HEIGHT / 2,
@@ -43,7 +118,7 @@ const [stripeBall, setStripeBall] = useState({
   const [isMoving, setIsMoving] = useState(false);
   const [blackBallPotted, setBlackBallPotted] = useState(false);
   const [solidBallPotted, setSolidBallPotted] = useState(false);
-const [stripeBallPotted, setStripeBallPotted] = useState(false);
+  const [stripeBallPotted, setStripeBallPotted] = useState(false);
   const [blackBallSinking, setBlackBallSinking] = useState(false);
   const [roomPin, setRoomPin] = useState("----");
   const [cueStriking, setCueStriking] = useState(false);
@@ -54,7 +129,10 @@ const [stripeBallPotted, setStripeBallPotted] = useState(false);
   const solidBallRef = useRef<Matter.Body | null>(null);
   const stripeBallRef = useRef<Matter.Body | null>(null);
   const aimRef = useRef(0);
-  const powerRef = useRef(50);
+  const powerRef = useRef(80);
+  const [balls, setBalls] = useState<PoolBall[]>([]);
+  const [pottedBallIds, setPottedBallIds] = useState<number[]>([]);
+  const ballsRef = useRef<Matter.Body[]>([]);
 
   useEffect(() => {
     const engine = Matter.Engine.create({
@@ -103,7 +181,7 @@ const rightWall = Matter.Bodies.rectangle(
   wallOptions
 );
 
-    const cueBall = Matter.Bodies.circle(TABLE_WIDTH / 2, TABLE_HEIGHT / 2, BALL_RADIUS, {
+   const cueBall = Matter.Bodies.circle(TABLE_WIDTH * 0.28, TABLE_HEIGHT / 2, BALL_RADIUS, {
       restitution: 0.92,
       friction: 0,
     frictionAir: 0.006,
@@ -152,11 +230,22 @@ blackBallRef.current = blackBall;
 
     cueBallRef.current = cueBall;
 
+    const rackBalls = createRackBalls();
+
+const rackBodies = rackBalls.map((ball) =>
+  Matter.Bodies.circle(ball.x, ball.y, BALL_RADIUS, {
+    restitution: 0.95,
+    friction: 0.01,
+    frictionAir: 0.01,
+  })
+);
+
+ballsRef.current = rackBodies;
+setBalls(rackBalls);
+
 Matter.World.add(engine.world, [
   cueBall,
-  blackBall,
-  solidBall,
-  stripeBall,
+  ...rackBodies,
   topWall,
   bottomWall,
   leftWall,
@@ -214,7 +303,7 @@ Matter.World.add(engine.world, [
       if (speed > 0.15) return;
 
       const radians = (aimRef.current * Math.PI) / 180;
-      const force = Math.max(0.025, powerRef.current * 0.0012);
+     const force = Math.max(0.035, powerRef.current * 0.0018);
 
  setCueStriking(true);
 
@@ -262,6 +351,40 @@ useEffect(() => {
       x: cueBall.position.x,
       y: cueBall.position.y,
     });
+
+    setBalls((previousBalls) =>
+  previousBalls.map((poolBall, index) => {
+    const body = ballsRef.current[index];
+
+    if (!body) {
+      return poolBall;
+    }
+
+    const pocket = POCKETS.find((pocket) => {
+      const dx = body.position.x - pocket.x;
+      const dy = body.position.y - pocket.y;
+
+      return Math.sqrt(dx * dx + dy * dy) < POCKET_RADIUS;
+    });
+
+    if (pocket && !pottedBallIds.includes(poolBall.id)) {
+      Matter.World.remove(engine.world, body);
+
+      setPottedBallIds((current) => [...current, poolBall.id]);
+
+      return {
+        ...poolBall,
+        potted: true,
+      };
+    }
+
+    return {
+      ...poolBall,
+      x: body.position.x,
+      y: body.position.y,
+    };
+  })
+);
 
     if (blackBall && !blackBallPotted && !blackBallSinking) {
       const pocket = POCKETS.find((pocket) => {
@@ -494,58 +617,53 @@ return (
   </svg>
 )}
 
-        <div
-          className="absolute rounded-full bg-white shadow-lg"
-          style={{
-            left: `${ballXPercent}%`,
-            top: `${ballYPercent}%`,
-            width: `${BALL_RADIUS * 2}px`,
-            height: `${BALL_RADIUS * 2}px`,
-            transform: "translate(-50%, -50%)",
-          }}
-        />
-      {!blackBallPotted && (
-  <div
-    className="absolute rounded-full bg-black shadow-lg ring-2 ring-white/20"
-    style={{
-      left: `${blackBallXPercent}%`,
-      top: `${blackBallYPercent}%`,
-      width: `${BALL_RADIUS * 2}px`,
-      height: `${BALL_RADIUS * 2}px`,
-      transform: "translate(-50%, -50%)",
-    }}
-  />
-)}
-{!solidBallPotted && (
-  <div
-    className="absolute z-30 flex items-center justify-center rounded-full bg-yellow-400 text-[10px] font-black text-black shadow-lg ring-2 ring-white/40"
-    style={{
-      left: `${solidBallXPercent}%`,
-      top: `${solidBallYPercent}%`,
-      width: `${BALL_RADIUS * 2}px`,
-      height: `${BALL_RADIUS * 2}px`,
-      transform: "translate(-50%, -50%)",
-    }}
-  >
-    1
-  </div>
-)}
+      {/* Cue ball */}
+<div
+  className="absolute z-30 rounded-full bg-white shadow-lg"
+  style={{
+    left: `${ballXPercent}%`,
+    top: `${ballYPercent}%`,
+   width: "2.35%",
+   aspectRatio: "1 / 1",
+    transform: "translate(-50%, -50%)",
+  }}
+/>
 
-{!stripeBallPotted && (
-  <div
-    className="absolute z-30 flex items-center justify-center overflow-hidden rounded-full bg-white text-[10px] font-black text-black shadow-lg ring-2 ring-white/40"
-    style={{
-      left: `${stripeBallXPercent}%`,
-      top: `${stripeBallYPercent}%`,
-      width: `${BALL_RADIUS * 2}px`,
-      height: `${BALL_RADIUS * 2}px`,
-      transform: "translate(-50%, -50%)",
-    }}
-  >
-    <div className="absolute left-0 right-0 top-1/2 h-3 -translate-y-1/2 bg-yellow-400" />
-    <span className="relative z-10">9</span>
-  </div>
-)}
+{/* Full rack balls */}
+{balls.map((poolBall) => {
+  const xPercent = (poolBall.x / TABLE_WIDTH) * 100;
+  const yPercent = (poolBall.y / TABLE_HEIGHT) * 100;
+
+  if (poolBall.potted) return null;
+
+  const isStripe = poolBall.type === "stripe";
+  const isBlack = poolBall.type === "black";
+
+  return (
+    <div
+      key={poolBall.id}
+      className="absolute z-30 flex items-center justify-center overflow-hidden rounded-full text-[10px] font-black text-black shadow-lg ring-2 ring-white/40"
+      style={{
+        left: `${xPercent}%`,
+        top: `${yPercent}%`,
+     width: "2.35%",
+     aspectRatio: "1 / 1",
+        transform: "translate(-50%, -50%)",
+        background: isBlack ? "#000000" : isStripe ? "#ffffff" : poolBall.color,
+        color: isBlack ? "#ffffff" : "#000000",
+      }}
+    >
+      {isStripe && (
+        <div
+          className="absolute left-0 right-0 top-1/2 h-3 -translate-y-1/2"
+          style={{ background: poolBall.color }}
+        />
+      )}
+
+      <span className="relative z-10">{poolBall.number}</span>
+    </div>
+  );
+})}
       </div>
 
 
