@@ -303,7 +303,7 @@ Matter.World.add(engine.world, [
       if (speed > 0.15) return;
 
       const radians = (aimRef.current * Math.PI) / 180;
-     const force = Math.max(0.035, powerRef.current * 0.0018);
+     const force = Math.max(0.03, powerRef.current * 0.0015);
 
  setCueStriking(true);
 

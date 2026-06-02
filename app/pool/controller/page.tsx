@@ -117,7 +117,7 @@ export default function PoolControllerPage() {
             <input
               type="range"
               min="0"
-              max="100"
+              max="90"
               value={power}
               onChange={(event) => sendPower(Number(event.target.value))}
               className="w-full"

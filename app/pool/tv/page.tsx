@@ -74,6 +74,9 @@ export default function PoolTvPage() {
             <p className="mt-10 text-3xl font-bold text-white/80">
               {status}
             </p>
+            <p className="mt-3 text-sm text-white/50">
+            Prototype test build. Play seated and avoid rapid controller movement.
+            </p>
           </div>
         </div>
       </section>
