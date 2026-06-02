@@ -1,5 +1,5 @@
 "use client";
-
+import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useRef, useState } from "react";
 import { poolSocket } from "@/lib/pool/socket";
 
@@ -7,6 +7,8 @@ export default function PoolTvPage() {
   const [pin, setPin] = useState("----");
   const [status, setStatus] = useState("Creating TV room...");
   const pinRef = useRef("");
+
+  const controllerUrl = "https://www.heiyudigital.com/pool/controller";
 
   useEffect(() => {
     poolSocket.emit("tv:create-room");
@@ -16,6 +18,8 @@ export default function PoolTvPage() {
       setPin(data.pin);
       setStatus("Waiting for phone controller...");
     });
+
+    
 
     poolSocket.on("tv:controller-connected", () => {
       setStatus("Phone connected. Loading game...");
@@ -59,6 +63,13 @@ export default function PoolTvPage() {
                 </div>
               ))}
             </div>
+            <div className="mt-10 rounded-3xl bg-white p-5">
+            <QRCodeSVG value={controllerUrl} size={180} />
+           </div>
+
+          <p className="mt-4 text-xl font-bold text-white/70">
+           heiyudigital.com/pool/controller
+          </p>
 
             <p className="mt-10 text-3xl font-bold text-white/80">
               {status}
