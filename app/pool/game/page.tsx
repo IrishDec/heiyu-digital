@@ -132,6 +132,7 @@ const [stripeBall, setStripeBall] = useState({
   const powerRef = useRef(80);
   const [balls, setBalls] = useState<PoolBall[]>([]);
   const [pottedBallIds, setPottedBallIds] = useState<number[]>([]);
+  const [pottedBalls, setPottedBalls] = useState<PoolBall[]>([]);
   const ballsRef = useRef<Matter.Body[]>([]);
 
   useEffect(() => {
@@ -367,10 +368,18 @@ useEffect(() => {
       return Math.sqrt(dx * dx + dy * dy) < POCKET_RADIUS;
     });
 
-    if (pocket && !pottedBallIds.includes(poolBall.id)) {
+   if (pocket && !poolBall.potted) {
       Matter.World.remove(engine.world, body);
 
-      setPottedBallIds((current) => [...current, poolBall.id]);
+   setPottedBallIds((current) =>
+  current.includes(poolBall.id) ? current : [...current, poolBall.id]
+);
+
+setPottedBalls((current) =>
+  current.some((ball) => ball.id === poolBall.id)
+    ? current
+    : [...current, poolBall]
+);
 
       return {
         ...poolBall,
@@ -460,7 +469,9 @@ useEffect(() => {
   const ballYPercent = (ball.y / TABLE_HEIGHT) * 100;
   const blackBallXPercent = (blackBall.x / TABLE_WIDTH) * 100;
   const blackBallYPercent = (blackBall.y / TABLE_HEIGHT) * 100;
-  const getAimLineLength = () => {
+
+
+ const getAimLineLength = () => {
   const radians = (aim * Math.PI) / 180;
 
   const startX = ball.x;
@@ -469,51 +480,43 @@ useEffect(() => {
   const dirX = Math.cos(radians);
   const dirY = Math.sin(radians);
 
-  let maxDistance = 900;
+  const leftLimit = 82;
+  const rightLimit = TABLE_WIDTH - 82;
+  const topLimit = 82;
+  const bottomLimit = TABLE_HEIGHT - 82;
 
-  if (dirX > 0) {
-    maxDistance = Math.min(maxDistance, (TABLE_WIDTH - 82 - startX) / dirX);
-  }
+  let distance = 2000;
 
-  if (dirX < 0) {
-    maxDistance = Math.min(maxDistance, (82 - startX) / dirX);
-  }
+  if (dirX > 0) distance = Math.min(distance, (rightLimit - startX) / dirX);
+  if (dirX < 0) distance = Math.min(distance, (leftLimit - startX) / dirX);
+  if (dirY > 0) distance = Math.min(distance, (bottomLimit - startY) / dirY);
+  if (dirY < 0) distance = Math.min(distance, (topLimit - startY) / dirY);
 
-  if (dirY > 0) {
-    maxDistance = Math.min(maxDistance, (TABLE_HEIGHT - 82 - startY) / dirY);
-  }
+  const liveBalls = balls.filter((poolBall) => !poolBall.potted);
 
-  if (dirY < 0) {
-    maxDistance = Math.min(maxDistance, (82 - startY) / dirY);
-  }
-
-  const ballsToCheck = [
-    !blackBallPotted ? blackBall : null,
-    !solidBallPotted ? solidBall : null,
-    !stripeBallPotted ? stripeBall : null,
-  ].filter(Boolean) as { x: number; y: number }[];
-
-  for (const target of ballsToCheck) {
+  for (const target of liveBalls) {
     const toBallX = target.x - startX;
     const toBallY = target.y - startY;
 
     const projection = toBallX * dirX + toBallY * dirY;
 
-    if (projection <= 0) continue;
+    if (projection <= BALL_RADIUS) continue;
+    if (projection >= distance) continue;
 
     const closestX = startX + dirX * projection;
     const closestY = startY + dirY * projection;
 
     const dx = target.x - closestX;
     const dy = target.y - closestY;
+
     const distanceToLine = Math.sqrt(dx * dx + dy * dy);
 
-    if (distanceToLine <= BALL_RADIUS * 2) {
-      maxDistance = Math.min(maxDistance, projection - BALL_RADIUS);
+    if (distanceToLine <= BALL_RADIUS) {
+      distance = projection - BALL_RADIUS;
     }
   }
 
-  return Math.max(40, maxDistance);
+  return Math.max(40, distance);
 };
 
 const aimLineLength = getAimLineLength();
@@ -544,6 +547,47 @@ return (
         alt=""
         className="pointer-events-none absolute inset-0 z-0 h-full w-full object-fill"
       />
+<img
+  src="/pool/table-bg.jpg"
+  alt=""
+  className="pointer-events-none absolute inset-0 z-0 h-full w-full object-fill"
+/>
+
+<div className="absolute bottom-3 left-1/2 z-40 -translate-x-1/2 rounded-2xl bg-black/40 px-4 py-3 backdrop-blur">
+  <p className="mb-2 text-xs font-black uppercase tracking-wider text-white/70">
+    Potted
+  </p>
+
+ <div className="flex flex-wrap gap-2">
+  {pottedBalls.map((poolBall, index) => {
+    const isStripe = poolBall.type === "stripe";
+    const isBlack = poolBall.type === "black";
+
+    return (
+      <div
+        key={`${poolBall.id}-${index}`}
+        className="relative flex items-center justify-center overflow-hidden rounded-full text-[10px] font-black shadow-lg ring-2 ring-white/40"
+        style={{
+          width: `${BALL_RADIUS * 2}px`,
+          height: `${BALL_RADIUS * 2}px`,
+          background: isBlack ? "#000000" : isStripe ? "#ffffff" : poolBall.color,
+          color: isBlack ? "#ffffff" : "#000000",
+        }}
+      >
+        {isStripe && (
+          <div
+            className="absolute left-0 right-0 top-1/2 h-3 -translate-y-1/2"
+            style={{ background: poolBall.color }}
+          />
+        )}
+
+        <span className="relative z-10">{poolBall.number}</span>
+      </div>
+    );
+  })}
+</div>
+</div>
+
 <button
   type="button"
   onClick={() => {
