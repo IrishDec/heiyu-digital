@@ -34,13 +34,14 @@ const POCKETS = [
 ];
 
 const createRackBalls = (): PoolBall[] => {
-const startX = TABLE_WIDTH / 2 + 150;
-const startY = TABLE_HEIGHT / 2;
-const ballGap = BALL_RADIUS * 2.02;
-const gapX = ballGap * 0.866;
-const gapY = ballGap;
+  const startX = TABLE_WIDTH / 2 + 150;
+  const startY = TABLE_HEIGHT / 2;
 
-  const rack = [
+  const ballGap = BALL_RADIUS * 2.02;
+  const gapX = ballGap * 0.866;
+  const gapY = ballGap;
+
+  const rack: number[][] = [
     [1],
     [9, 2],
     [3, 8, 10],
@@ -66,6 +67,12 @@ const gapY = ballGap;
     15: "#7f1d1d",
   };
 
+  const getBallType = (number: number): PoolBallType => {
+  if (number === 8) return "black";
+  if (number <= 7) return "solid";
+  return "stripe";
+};
+
   const balls: PoolBall[] = [];
 
   rack.forEach((row, rowIndex) => {
@@ -79,12 +86,7 @@ const y =
       balls.push({
         id: number,
         number,
-        type:
-          number === 8
-            ? "black"
-            : number <= 7
-              ? "solid"
-              : "stripe",
+        type: getBallType(number),
         color: colors[number],
         x,
         y,
@@ -103,7 +105,7 @@ export default function PoolGamePage() {
 
 
   const [isMoving, setIsMoving] = useState(false);
-
+const isMovingRef = useRef(false);
   const [roomPin, setRoomPin] = useState("----");
   const [cueStriking, setCueStriking] = useState(false);
 
@@ -114,6 +116,21 @@ export default function PoolGamePage() {
   const [balls, setBalls] = useState<PoolBall[]>([]);
   const [pottedBallIds, setPottedBallIds] = useState<number[]>([]);
   const [pottedBalls, setPottedBalls] = useState<PoolBall[]>([]);
+  const [tableOpen, setTableOpen] = useState(true);
+  const tableOpenRef = useRef(true);
+  const [playerOneGroup, setPlayerOneGroup] = useState<PoolBallType | null>(null);
+  const [playerTwoGroup, setPlayerTwoGroup] = useState<PoolBallType | null>(null);
+  const [currentPlayer, setCurrentPlayer] = useState<1 | 2>(1);
+  const currentPlayerRef = useRef<1 | 2>(1);
+  const switchPlayer = () => {
+  const nextPlayer = currentPlayerRef.current === 1 ? 2 : 1;
+
+  currentPlayerRef.current = nextPlayer;
+  setCurrentPlayer(nextPlayer);
+};
+
+  const [shotPottedBall, setShotPottedBall] = useState(false);
+  const shotPottedBallRef = useRef(false);
   const ballsRef = useRef<Matter.Body[]>([]);
 
   useEffect(() => {
@@ -246,7 +263,8 @@ Matter.World.add(engine.world, [
 
       const radians = (aimRef.current * Math.PI) / 180;
      const force = Math.max(0.03, powerRef.current * 0.0015);
-
+shotPottedBallRef.current = false;
+setShotPottedBall(false);
  setCueStriking(true);
 
 setTimeout(() => {
@@ -278,19 +296,26 @@ useEffect(() => {
     Matter.Engine.update(engine, 1000 / 60);
 
     const speed = Math.hypot(cueBall.velocity.x, cueBall.velocity.y);
+    
+if (speed < 0.08) {
+  Matter.Body.setVelocity(cueBall, { x: 0, y: 0 });
+  Matter.Body.setAngularVelocity(cueBall, 0);
 
-    if (speed < 0.08) {
-      Matter.Body.setVelocity(cueBall, { x: 0, y: 0 });
-      Matter.Body.setAngularVelocity(cueBall, 0);
-      setIsMoving(false);
-    } else {
-      setIsMoving(true);
-    }
+if (isMovingRef.current && !shotPottedBallRef.current) {
+  switchPlayer();
+}
 
-    setBall({
-      x: cueBall.position.x,
-      y: cueBall.position.y,
-    });
+  isMovingRef.current = false;
+  setIsMoving(false);
+} else {
+  isMovingRef.current = true;
+  setIsMoving(true);
+}
+
+setBall({
+  x: cueBall.position.x,
+  y: cueBall.position.y,
+});
 
     setBalls((previousBalls) =>
   previousBalls.map((poolBall, index) => {
@@ -309,6 +334,22 @@ useEffect(() => {
 
    if (pocket && !poolBall.potted) {
       Matter.World.remove(engine.world, body);
+      shotPottedBallRef.current = true;
+setShotPottedBall(true);
+     if (tableOpenRef.current && poolBall.type !== "black") {
+  if (poolBall.type === "solid") {
+    setPlayerOneGroup("solid");
+    setPlayerTwoGroup("stripe");
+  }
+
+  if (poolBall.type === "stripe") {
+    setPlayerOneGroup("stripe");
+    setPlayerTwoGroup("solid");
+  }
+
+ tableOpenRef.current = false;
+setTableOpen(false);
+}
 
    setPottedBallIds((current) =>
   current.includes(poolBall.id) ? current : [...current, poolBall.id]
@@ -421,10 +462,17 @@ return (
   className="pointer-events-none absolute inset-0 z-0 h-full w-full object-fill"
 />
 
-<div className="absolute bottom-3 left-1/2 z-40 -translate-x-1/2 rounded-2xl bg-black/40 px-4 py-3 backdrop-blur">
+<div className="absolute bottom-3 left-[450px] z-40 rounded-2xl bg-black/40 px-4 py-3 backdrop-blur">
   <p className="mb-2 text-xs font-black uppercase tracking-wider text-white/70">
     Potted
   </p>
+
+  <p className="mb-2 text-center text-xs text-white">
+  {tableOpen
+    ? "Open Table"
+    : `P1: ${playerOneGroup} | P2: ${playerTwoGroup}`}
+</p>
+  
 
  <div className="flex flex-wrap gap-2">
   {pottedBalls.map((poolBall, index) => {
@@ -465,6 +513,9 @@ return (
 >
   New Game
 </button>
+<div className="absolute left-1/2 top-6 z-30 -translate-x-1/2 rounded-2xl bg-emerald-400/20 px-6 py-3 text-lg font-black text-emerald-200 backdrop-blur">
+  Player {currentPlayer} to shoot
+</div>
         <div className="absolute left-6 top-6 rounded-xl bg-black/30 px-4 py-3 text-white">
           <div className="text-xs uppercase text-white/60">Room</div>
           <div className="text-xl font-black">{roomPin}</div>
@@ -475,10 +526,11 @@ return (
           <div className="mt-2 text-xs uppercase text-white/60">Power</div>
           <div className="text-2xl font-black">{power}%</div>
 
-          <div className="mt-2 text-xs text-white/60">
-            {isMoving ? "Ball moving" : "Ready"}
-          </div>
-        </div>
+        <div className="mt-2 text-xs text-white/60">
+  {isMoving ? "Ball moving" : "Ready"}
+</div>
+
+</div>
 
 {!isMoving && (
   <svg
