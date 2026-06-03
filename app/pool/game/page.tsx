@@ -120,8 +120,28 @@ const isMovingRef = useRef(false);
   const tableOpenRef = useRef(true);
   const [playerOneGroup, setPlayerOneGroup] = useState<PoolBallType | null>(null);
   const [playerTwoGroup, setPlayerTwoGroup] = useState<PoolBallType | null>(null);
+  const playerOneGroupRef = useRef<PoolBallType | null>(null);
+  const playerTwoGroupRef = useRef<PoolBallType | null>(null);
+
   const [currentPlayer, setCurrentPlayer] = useState<1 | 2>(1);
+  const [winner, setWinner] = useState<1 | 2 | null>(null);
+  const winnerRef = useRef<1 | 2 | null>(null);
+  
+  const [gameMessage, setGameMessage] = useState("");
   const currentPlayerRef = useRef<1 | 2>(1);
+
+ const hasClearedGroup = (player: 1 | 2, currentBalls: PoolBall[]) => {
+ const group =
+  player === 1 ? playerOneGroupRef.current : playerTwoGroupRef.current;
+
+  if (!group || group === "black") return false;
+
+  return currentBalls
+    .filter((ball) => ball.type === group)
+    .every((ball) => ball.potted);
+};
+
+
   const switchPlayer = () => {
   const nextPlayer = currentPlayerRef.current === 1 ? 2 : 1;
 
@@ -257,6 +277,7 @@ Matter.World.add(engine.world, [
     socket.on("game:shoot", () => {
       const cueBall = cueBallRef.current;
       if (!cueBall) return;
+     if (winnerRef.current) return;
 
       const speed = Math.hypot(cueBall.velocity.x, cueBall.velocity.y);
       if (speed > 0.15) return;
@@ -334,18 +355,39 @@ setBall({
 
    if (pocket && !poolBall.potted) {
       Matter.World.remove(engine.world, body);
+      if (poolBall.type === "black") {
+  const clearedGroup = hasClearedGroup(currentPlayerRef.current, previousBalls);
+
+  if (clearedGroup) {
+   winnerRef.current = currentPlayerRef.current;
+setWinner(currentPlayerRef.current);
+    setGameMessage(`Player ${currentPlayerRef.current} wins`);
+  } else {
+    const otherPlayer = currentPlayerRef.current === 1 ? 2 : 1;
+   winnerRef.current = otherPlayer;
+winnerRef.current = otherPlayer;
+setWinner(otherPlayer);
+setGameMessage(`Player ${otherPlayer} wins — black potted early`);
+  }
+}
       shotPottedBallRef.current = true;
 setShotPottedBall(true);
      if (tableOpenRef.current && poolBall.type !== "black") {
-  if (poolBall.type === "solid") {
-    setPlayerOneGroup("solid");
-    setPlayerTwoGroup("stripe");
-  }
+ if (poolBall.type === "solid") {
+  playerOneGroupRef.current = "solid";
+  playerTwoGroupRef.current = "stripe";
 
-  if (poolBall.type === "stripe") {
-    setPlayerOneGroup("stripe");
-    setPlayerTwoGroup("solid");
-  }
+  setPlayerOneGroup("solid");
+  setPlayerTwoGroup("stripe");
+}
+
+if (poolBall.type === "stripe") {
+  playerOneGroupRef.current = "stripe";
+  playerTwoGroupRef.current = "solid";
+
+  setPlayerOneGroup("stripe");
+  setPlayerTwoGroup("solid");
+}
 
  tableOpenRef.current = false;
 setTableOpen(false);
@@ -456,11 +498,6 @@ return (
         alt=""
         className="pointer-events-none absolute inset-0 z-0 h-full w-full object-fill"
       />
-<img
-  src="/pool/table-bg.jpg"
-  alt=""
-  className="pointer-events-none absolute inset-0 z-0 h-full w-full object-fill"
-/>
 
 <div className="absolute bottom-3 left-[450px] z-40 rounded-2xl bg-black/40 px-4 py-3 backdrop-blur">
   <p className="mb-2 text-xs font-black uppercase tracking-wider text-white/70">
@@ -514,7 +551,18 @@ return (
   New Game
 </button>
 <div className="absolute left-1/2 top-6 z-30 -translate-x-1/2 rounded-2xl bg-emerald-400/20 px-6 py-3 text-lg font-black text-emerald-200 backdrop-blur">
-  Player {currentPlayer} to shoot
+{winner && gameMessage.includes("black potted early") ? (
+  <span className="flex items-center gap-3">
+    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-black text-white ring-2 ring-white/40">
+      8
+    </span>
+    <span>{gameMessage.replace(" — ", " ")}</span>
+  </span>
+) : winner ? (
+  gameMessage
+) : (
+  `Player ${currentPlayer} to shoot`
+)}
 </div>
         <div className="absolute left-6 top-6 rounded-xl bg-black/30 px-4 py-3 text-white">
           <div className="text-xs uppercase text-white/60">Room</div>
@@ -532,7 +580,7 @@ return (
 
 </div>
 
-{!isMoving && (
+{!isMoving && !winner && (
   <svg
     className="pointer-events-none absolute inset-0 z-30 h-full w-full"
     viewBox={`0 0 ${TABLE_WIDTH} ${TABLE_HEIGHT}`}
