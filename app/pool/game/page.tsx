@@ -100,34 +100,15 @@ export default function PoolGamePage() {
   const [aim, setAim] = useState(0);
   const [power, setPower] = useState(80);
  const [ball, setBall] = useState({ x: TABLE_WIDTH * 0.28, y: TABLE_HEIGHT / 2 });
-  const [blackBall, setBlackBall] = useState({
-  x: TABLE_WIDTH / 2 + 220,
-  y: TABLE_HEIGHT / 2,
-});
 
-const [solidBall, setSolidBall] = useState({
-  x: TABLE_WIDTH / 2 + 120,
-  y: TABLE_HEIGHT / 2 - 70,
-});
-
-const [stripeBall, setStripeBall] = useState({
-  x: TABLE_WIDTH / 2 + 120,
-  y: TABLE_HEIGHT / 2 + 70,
-});
 
   const [isMoving, setIsMoving] = useState(false);
-  const [blackBallPotted, setBlackBallPotted] = useState(false);
-  const [solidBallPotted, setSolidBallPotted] = useState(false);
-  const [stripeBallPotted, setStripeBallPotted] = useState(false);
-  const [blackBallSinking, setBlackBallSinking] = useState(false);
+
   const [roomPin, setRoomPin] = useState("----");
   const [cueStriking, setCueStriking] = useState(false);
 
   const engineRef = useRef<Matter.Engine | null>(null);
   const cueBallRef = useRef<Matter.Body | null>(null);
-  const blackBallRef = useRef<Matter.Body | null>(null);
-  const solidBallRef = useRef<Matter.Body | null>(null);
-  const stripeBallRef = useRef<Matter.Body | null>(null);
   const aimRef = useRef(0);
   const powerRef = useRef(80);
   const [balls, setBalls] = useState<PoolBall[]>([]);
@@ -188,46 +169,6 @@ const rightWall = Matter.Bodies.rectangle(
     frictionAir: 0.006,
       density: 0.004,
     });
-
-    const blackBall = Matter.Bodies.circle(
-  TABLE_WIDTH / 2 + 220,
-  TABLE_HEIGHT / 2,
-  BALL_RADIUS,
-  {
-    restitution: 0.92,
-    friction: 0,
-    frictionAir: 0.006,
-    density: 0.001,
-    inertia: Infinity,
-  }
-);
-
-const solidBall = Matter.Bodies.circle(
-  TABLE_WIDTH / 2 + 120,
-  TABLE_HEIGHT / 2 - 70,
-  BALL_RADIUS,
-  {
-    restitution: 0.95,
-    friction: 0.01,
-    frictionAir: 0.01,
-  }
-);
-
-const stripeBall = Matter.Bodies.circle(
-  TABLE_WIDTH / 2 + 120,
-  TABLE_HEIGHT / 2 + 70,
-  BALL_RADIUS,
-  {
-    restitution: 0.95,
-    friction: 0.01,
-    frictionAir: 0.01,
-  }
-);
-
-solidBallRef.current = solidBall;
-stripeBallRef.current = stripeBall;
-
-blackBallRef.current = blackBall;
 
     cueBallRef.current = cueBall;
 
@@ -330,9 +271,7 @@ useEffect(() => {
   const frame = setInterval(() => {
     const engine = engineRef.current;
     const cueBall = cueBallRef.current;
-    const blackBall = blackBallRef.current;
-    const solidBall = solidBallRef.current;
-    const stripeBall = stripeBallRef.current;
+  
 
     if (!engine || !cueBall) return;
 
@@ -395,81 +334,14 @@ setPottedBalls((current) =>
   })
 );
 
-    if (blackBall && !blackBallPotted && !blackBallSinking) {
-      const pocket = POCKETS.find((pocket) => {
-        const dx = blackBall.position.x - pocket.x;
-        const dy = blackBall.position.y - pocket.y;
-        return Math.sqrt(dx * dx + dy * dy) < POCKET_RADIUS;
-      });
-
-      if (pocket) {
-        setBlackBallSinking(true);
-        Matter.Body.setVelocity(blackBall, { x: 0, y: 0 });
-        Matter.Body.setAngularVelocity(blackBall, 0);
-        Matter.Body.setPosition(blackBall, pocket);
-        setBlackBall({ x: pocket.x, y: pocket.y });
-
-        setTimeout(() => {
-          const engine = engineRef.current;
-          if (engine) Matter.World.remove(engine.world, blackBall);
-          blackBallRef.current = null;
-          setBlackBallPotted(true);
-        }, 450);
-      } else {
-        setBlackBall({
-          x: blackBall.position.x,
-          y: blackBall.position.y,
-        });
-      }
-    }
-
-    if (solidBall && !solidBallPotted) {
-      const pocket = POCKETS.find((pocket) => {
-        const dx = solidBall.position.x - pocket.x;
-        const dy = solidBall.position.y - pocket.y;
-        return Math.sqrt(dx * dx + dy * dy) < POCKET_RADIUS;
-      });
-
-      if (pocket) {
-        Matter.World.remove(engine.world, solidBall);
-        solidBallRef.current = null;
-        setSolidBallPotted(true);
-      } else {
-        setSolidBall({
-          x: solidBall.position.x,
-          y: solidBall.position.y,
-        });
-      }
-    }
-
-    if (stripeBall && !stripeBallPotted) {
-      const pocket = POCKETS.find((pocket) => {
-        const dx = stripeBall.position.x - pocket.x;
-        const dy = stripeBall.position.y - pocket.y;
-        return Math.sqrt(dx * dx + dy * dy) < POCKET_RADIUS;
-      });
-
-      if (pocket) {
-        Matter.World.remove(engine.world, stripeBall);
-        stripeBallRef.current = null;
-        setStripeBallPotted(true);
-      } else {
-        setStripeBall({
-          x: stripeBall.position.x,
-          y: stripeBall.position.y,
-        });
-      }
-    }
+ 
   }, 1000 / 60);
 
-  return () => clearInterval(frame);
-}, [blackBallPotted, blackBallSinking, solidBallPotted, stripeBallPotted]);
+return () => clearInterval(frame);
+}, []);
 
   const ballXPercent = (ball.x / TABLE_WIDTH) * 100;
   const ballYPercent = (ball.y / TABLE_HEIGHT) * 100;
-  const blackBallXPercent = (blackBall.x / TABLE_WIDTH) * 100;
-  const blackBallYPercent = (blackBall.y / TABLE_HEIGHT) * 100;
-
 
  const getAimLineLength = () => {
   const radians = (aim * Math.PI) / 180;
@@ -534,11 +406,7 @@ const cueTipX = ball.x - aimDirX * (BALL_RADIUS + cueTipGap);
 const cueTipY = ball.y - aimDirY * (BALL_RADIUS + cueTipGap);
 const cueBackX = ball.x - aimDirX * 300;
 const cueBackY = ball.y - aimDirY * 300;
-  const solidBallXPercent = (solidBall.x / TABLE_WIDTH) * 100;
-const solidBallYPercent = (solidBall.y / TABLE_HEIGHT) * 100;
 
-const stripeBallXPercent = (stripeBall.x / TABLE_WIDTH) * 100;
-const stripeBallYPercent = (stripeBall.y / TABLE_HEIGHT) * 100;
 return (
   <main className="flex min-h-screen items-center justify-center bg-[#07140f] p-8">
    <div className="relative aspect-[2/1] w-[96vw] max-w-[1800px] overflow-hidden rounded-[28px] shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
