@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Heiyu Digital
 
-## Getting Started
+A digital product and MVP development website for Heiyu Digital.
 
-First, run the development server:
+Heiyu Digital focuses on turning ideas into working web products, landing pages, MVPs, internal tools, and AI-assisted applications.
+
+## Status
+
+This project is active and continues to evolve as new services, case studies, and product examples are added.
+
+## Purpose
+
+The goal of the website is to present Heiyu Digital as a practical product-building studio for founders, small businesses, community groups, and early-stage ideas.
+
+The site showcases the ability to move from idea to working product quickly, with a focus on clean design, mobile-first development, and real deployment.
+
+## Tech Stack
+
+* Next.js
+* TypeScript
+* Tailwind CSS
+* Vercel
+
+## Key Sections
+
+* Home page
+* MVP development page
+* HeiyuBudget case study
+* HeiyuQuiz / engagement offering
+* Service positioning
+* Calls to action
+* Contact routes
+
+## Services Presented
+
+* MVP development
+* Landing pages
+* Web applications
+* Internal tools
+* AI-assisted product builds
+* SaaS prototypes
+* Community and business websites
+
+## My Contribution
+
+This project was designed, built, written, and deployed from scratch.
+
+Responsibilities included:
+
+* Brand positioning
+* Website design
+* Front-end development
+* Copywriting
+* Page structure
+* Product/service presentation
+* Deployment
+* Ongoing iteration
+
+## Development
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deployment
 
-## Learn More
+The project is deployed using Vercel.
 
-To learn more about Next.js, take a look at the following resources:
+## Notes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Heiyu Digital acts as the main public website for presenting product work, MVP services, and real examples of shipped applications.
