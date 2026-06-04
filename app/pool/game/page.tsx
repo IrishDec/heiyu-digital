@@ -499,6 +499,50 @@ return (
         className="pointer-events-none absolute inset-0 z-0 h-full w-full object-fill"
       />
 
+      {/* Table markings */}
+<svg
+  className="pointer-events-none absolute inset-0 z-10 h-full w-full"
+  viewBox={`0 0 ${TABLE_WIDTH} ${TABLE_HEIGHT}`}
+  preserveAspectRatio="none"
+>
+  {/* Baulk line */}
+  <line
+    x1={TABLE_WIDTH * 0.28}
+    y1={82}
+    x2={TABLE_WIDTH * 0.28}
+    y2={TABLE_HEIGHT - 82}
+    stroke="rgba(255,255,255,0.45)"
+    strokeWidth="2"
+  />
+
+  {/* D semicircle */}
+  <path
+    d={`
+      M ${TABLE_WIDTH * 0.28} ${TABLE_HEIGHT / 2 - 72}
+      A 72 72 0 0 1 ${TABLE_WIDTH * 0.28} ${TABLE_HEIGHT / 2 + 72}
+    `}
+    fill="none"
+    stroke="rgba(255,255,255,0.45)"
+    strokeWidth="2"
+  />
+
+  {/* Black spot */}
+  <circle
+    cx={TABLE_WIDTH * 0.72}
+    cy={TABLE_HEIGHT / 2}
+    r="5"
+    fill="rgba(255,255,255,0.65)"
+  />
+
+  {/* Rack/front spot */}
+  <circle
+    cx={TABLE_WIDTH / 2 + 150}
+    cy={TABLE_HEIGHT / 2}
+    r="4"
+    fill="rgba(255,255,255,0.45)"
+  />
+</svg>
+
 <div className="absolute bottom-3 left-[450px] z-40 rounded-2xl bg-black/40 px-4 py-3 backdrop-blur">
   <p className="mb-2 text-xs font-black uppercase tracking-wider text-white/70">
     Potted
