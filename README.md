@@ -8,6 +8,16 @@ Heiyu Digital focuses on turning ideas into working web products, landing pages,
 
 This project is active and continues to evolve as new services, case studies, and product examples are added.
 
+### Live Products
+
+*### Live Products
+
+** [Heiyu Pool TV](https://heiyudigital.com/pool/tv) — Browser-based pool game built primarily for Smart TVs, with phone controller support. Also playable in any modern browser.
+
+* [Heiyu Quiz](https://heiyuquiz.com) — AI-powered quiz platform for events, education, engagement, and branded experiences.
+
+* [Heiyu Budget](https://heiyubudget.com) — Voice-first income and expense tracking for self-employed workers, startups, and everyday budgeting.
+
 ## Purpose
 
 The goal of the website is to present Heiyu Digital as a practical product-building studio for founders, small businesses, community groups, and early-stage ideas.
