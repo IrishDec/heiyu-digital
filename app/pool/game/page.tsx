@@ -128,6 +128,7 @@ const isMovingRef = useRef(false);
   const winnerRef = useRef<1 | 2 | null>(null);
   
   const [gameMessage, setGameMessage] = useState("");
+  const [showBuildUpdate, setShowBuildUpdate] = useState(false);
   const currentPlayerRef = useRef<1 | 2>(1);
 
  const hasClearedGroup = (player: 1 | 2, currentBalls: PoolBall[]) => {
@@ -519,7 +520,7 @@ return (
   <path
     d={`
       M ${TABLE_WIDTH * 0.28} ${TABLE_HEIGHT / 2 - 72}
-      A 72 72 0 0 1 ${TABLE_WIDTH * 0.28} ${TABLE_HEIGHT / 2 + 72}
+     A 72 72 0 0 0 ${TABLE_WIDTH * 0.28} ${TABLE_HEIGHT / 2 + 72}
     `}
     fill="none"
     stroke="rgba(255,255,255,0.45)"
@@ -584,6 +585,13 @@ return (
   })}
 </div>
 </div>
+<button
+  type="button"
+  onClick={() => setShowBuildUpdate(true)}
+  className="absolute right-48 top-6 z-20 rounded-2xl bg-emerald-400/90 px-6 py-4 text-xl font-black text-[#07140f] shadow-lg hover:bg-emerald-300"
+>
+  Build Update
+</button>
 
 <button
   type="button"
@@ -684,6 +692,66 @@ return (
     transform: "translate(-50%, -50%)",
   }}
 />
+
+{showBuildUpdate && (
+  <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 p-6 backdrop-blur-sm">
+    <div className="max-w-2xl rounded-3xl bg-[#07140f] p-8 text-white shadow-2xl ring-1 ring-white/15">
+      <div className="mb-4 flex items-center justify-between gap-6">
+        <h2 className="text-3xl font-black">Build Update</h2>
+
+        <button
+          type="button"
+          onClick={() => setShowBuildUpdate(false)}
+          className="rounded-full bg-white/10 px-4 py-2 text-sm font-black text-white hover:bg-white/20"
+        >
+          Close
+        </button>
+      </div>
+
+      <p className="text-lg font-bold text-emerald-300">
+        Sprint 1 complete started 1 June 2026.
+      </p>
+
+      <p className="mt-3 text-white/75">
+        After a four day sprint, Heiyu Pool TV is now a playable TV and phone controller pool game.
+        Back to the real world of work now, and looking forward to the next sprint.
+      </p>
+
+      <div className="mt-6 grid gap-4 md:grid-cols-2">
+        <div className="rounded-2xl bg-white/10 p-4">
+          <h3 className="mb-2 font-black text-emerald-300">Built so far</h3>
+          <ul className="space-y-1 text-sm text-white/75">
+            <li>TV and phone pairing</li>
+            <li>QR controller flow</li>
+            <li>Full 15-ball rack</li>
+            <li>Turn system</li>
+            <li>Solids and stripes</li>
+            <li>Black ball win/loss rules</li>
+            <li>Potted ball tray</li>
+          </ul>
+        </div>
+
+        <div className="rounded-2xl bg-white/10 p-4">
+          <h3 className="mb-2 font-black text-emerald-300">Coming next</h3>
+          <ul className="space-y-1 text-sm text-white/75">
+            <li>Tighter pockets</li>
+            <li>Cue ball scratch fouls</li>
+            <li>Wrong-ball foul rules</li>
+            <li>Ball-in-hand rules</li>
+            <li>Potting animations</li>
+            <li>Sound effects</li>
+            <li>Cue spin controls</li>
+          </ul>
+        </div>
+      </div>
+
+      <p className="mt-6 rounded-2xl bg-amber-400/10 p-4 text-sm text-amber-100">
+        Note: this project currently uses a free server. If the game has been inactive for a while,
+        the first connection may take a few moments to wake up.
+      </p>
+    </div>
+  </div>
+)}
 
 {/* Full rack balls */}
 {balls.map((poolBall) => {
