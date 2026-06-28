@@ -82,20 +82,28 @@ export default function Home() {
 
       {/* HERO */}
       <section className="pt-44 pb-12 md:pt-48 md:pb-24 px-6 max-w-5xl mx-auto flex flex-col items-center text-center">
-        <div className="inline-block px-4 py-1.5 mb-8 border border-indigo-500/30 rounded-full bg-indigo-500/10 text-indigo-300 text-xs font-bold tracking-widest uppercase">
-          Full-Stack & Database Architecture
-        </div>
-        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.1]">
-          We Build{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
-            Digital Engines
-          </span>
-          <br /> Not Just Websites.
-        </h1>
-        <p className="text-xl text-gray-300 max-w-2xl mb-10 leading-relaxed">
-          Specializing in high performance WebApps, Database Systems, and Legacy Modernization for the real world.
-        </p>
+     <div className="inline-block px-4 py-1.5 mb-8 border border-indigo-500/30 rounded-full bg-indigo-500/10 text-indigo-300 text-xs font-bold tracking-widest uppercase">
+  AI Software Studio · Dublin
+</div>
 
+<h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.1]">
+  We Build{" "}
+  <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+    AI-Powered Software
+  </span>
+  <br /> For Real Businesses.
+</h1>
+
+<p className="text-xl text-gray-300 max-w-3xl mb-10 leading-relaxed">
+  Heiyu Digital designs and builds custom websites & web applications, SaaS products,
+  business automation tools and AI-powered software systems from Dublin.
+</p>
+
+<div className="flex flex-col sm:flex-row gap-4">
+  <a href="/contact" className="px-6 py-3 rounded-xl bg-indigo-500 text-white font-bold hover:bg-indigo-400 transition">
+    Start a Project
+  </a>
+</div>
       </section>
 
       {/* ===================== */}
@@ -104,7 +112,7 @@ export default function Home() {
 
       <section id="work" className="py-10 md:py-20 px-6 max-w-6xl mx-auto">
         <h2 className="text-3xl font-bold mb-8 md:mb-16 border-l-4 border-indigo-500 pl-4">
-          Selected Works
+          Heiyu Digital Products
         </h2>
 
         {/* =============================== */}
@@ -332,8 +340,18 @@ Run live competitions with up to 300 concurrent players, AI-generated or custom 
 
       
 {/* SERVICES */}
-<section id="services" className="py-16 px-6 bg-[#0a0a0a] border-y border-white/5">
+<section id="services" className="py-20 px-6 bg-[#0a0a0a] border-y border-white/5">
   <div className="max-w-5xl mx-auto">
+    <div className="mb-12">
+      <h2 className="text-3xl md:text-4xl font-bold mb-4">
+        What We Build
+      </h2>
+      <p className="text-gray-400 max-w-2xl text-lg leading-relaxed">
+        From internal tools to public SaaS products, Heiyu Digital builds practical software
+        that helps businesses launch faster, automate work and serve users better.
+      </p>
+    </div>
+
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
       {/* Custom Web Apps */}
