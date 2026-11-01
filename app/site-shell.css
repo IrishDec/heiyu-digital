@@ -1,0 +1,26 @@
+
+/* Homepage and preview */
+[data-heiyu-page="/"] nav,
+[data-heiyu-page="/"] footer,
+[data-heiyu-page="/preview"] nav,
+[data-heiyu-page="/preview"] footer,
+
+/* Existing product pages */
+[data-heiyu-page="/heiyubudget"] nav.fixed,
+[data-heiyu-page="/heiyubudget"] footer,
+[data-heiyu-page="/engagement"] nav.fixed,
+[data-heiyu-page="/engagement"] footer,
+[data-heiyu-page="/mvp"] nav.fixed,
+[data-heiyu-page="/mvp"] footer,
+
+/* Existing case studies */
+[data-heiyu-page^="/work/"] nav.sticky,
+[data-heiyu-page^="/work/"] footer {
+  display: none !important;
+}
+
+/* Account for the shared header on older pages */
+[data-heiyu-page="/engagement"] > main,
+[data-heiyu-page="/mvp"] > main {
+  padding-top: 3rem;
+}
