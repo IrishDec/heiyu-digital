@@ -127,6 +127,7 @@ io.on("connection", (socket) => {
 
   socket.on("controller:spin", ({ pin, spinX, spinY }) => {
     const roomPin = cleanPin(pin);
+    console.log("SPIN", roomPin, spinX, spinY);
     io.to(roomPin).emit("game:spin", { spinX, spinY });
   });
 
