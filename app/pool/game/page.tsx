@@ -116,6 +116,10 @@ const isMovingRef = useRef(false);
   const [balls, setBalls] = useState<PoolBall[]>([]);
   const [pottedBallIds, setPottedBallIds] = useState<number[]>([]);
   const [pottedBalls, setPottedBalls] = useState<PoolBall[]>([]);
+  const [droppingBalls, setDroppingBalls] = useState<
+    (PoolBall & { pocketX: number; pocketY: number })[]
+  >([]);
+
   const [tableOpen, setTableOpen] = useState(true);
   const tableOpenRef = useRef(true);
   const [playerOneGroup, setPlayerOneGroup] = useState<PoolBallType | null>(null);
@@ -317,6 +321,28 @@ useEffect(() => {
 
     Matter.Engine.update(engine, 1000 / 60);
 
+    // Return the cue ball after a scratch.
+    const cuePocketed = POCKETS.some((pocket) =>
+      Math.hypot(
+        cueBall.position.x - pocket.x,
+        cueBall.position.y - pocket.y
+      ) < POCKET_RADIUS
+    );
+
+    if (cuePocketed) {
+      Matter.Body.setPosition(cueBall, {
+        x: TABLE_WIDTH * 0.28,
+        y: TABLE_HEIGHT / 2,
+      });
+      Matter.Body.setVelocity(cueBall, { x: 0, y: 0 });
+      Matter.Body.setAngularVelocity(cueBall, 0);
+      setBall({
+        x: TABLE_WIDTH * 0.28,
+        y: TABLE_HEIGHT / 2,
+      });
+      setGameMessage("Cue ball scratched");
+    }
+
     const speed = Math.hypot(cueBall.velocity.x, cueBall.velocity.y);
     
 if (speed < 0.08) {
@@ -355,6 +381,22 @@ setBall({
     });
 
    if (pocket && !poolBall.potted) {
+      const droppingBall = {
+        ...poolBall,
+        x: body.position.x,
+        y: body.position.y,
+        pocketX: pocket.x,
+        pocketY: pocket.y,
+      };
+
+      setDroppingBalls((current) => [...current, droppingBall]);
+
+      setTimeout(() => {
+        setDroppingBalls((current) =>
+          current.filter((item) => item.id !== droppingBall.id)
+        );
+      }, 320);
+
       Matter.World.remove(engine.world, body);
       if (poolBall.type === "black") {
   const clearedGroup = hasClearedGroup(currentPlayerRef.current, previousBalls);
@@ -752,6 +794,57 @@ return (
     </div>
   </div>
 )}
+
+{/* Separate pocket-drop animation */}
+{droppingBalls.map((droppingBall) => (
+  <div
+    key={`drop-${droppingBall.id}`}
+    className="pointer-events-none absolute z-20 flex items-center justify-center rounded-full text-[10px] font-black shadow-lg"
+    style={{
+      left: `${(droppingBall.x / TABLE_WIDTH) * 100}%`,
+      top: `${(droppingBall.y / TABLE_HEIGHT) * 100}%`,
+      width: "2.35%",
+      aspectRatio: "1 / 1",
+      background:
+        droppingBall.type === "stripe"
+          ? "#ffffff"
+          : droppingBall.color,
+      color: droppingBall.type === "black" ? "#ffffff" : "#000000",
+      transform: "translate(-50%, -50%)",
+      animation: "none",
+    }}
+    ref={(element) => {
+      if (!element || element.dataset.started) return;
+      element.dataset.started = "true";
+      element.animate(
+        [
+          {
+            left: `${(droppingBall.x / TABLE_WIDTH) * 100}%`,
+            top: `${(droppingBall.y / TABLE_HEIGHT) * 100}%`,
+            transform: "translate(-50%, -50%) scale(1)",
+            opacity: 1,
+          },
+          {
+            left: `${(droppingBall.pocketX / TABLE_WIDTH) * 100}%`,
+            top: `${(droppingBall.pocketY / TABLE_HEIGHT) * 100}%`,
+            transform: "translate(-50%, -50%) scale(0.7)",
+            opacity: 1,
+            offset: 0.65,
+          },
+          {
+            left: `${(droppingBall.pocketX / TABLE_WIDTH) * 100}%`,
+            top: `${(droppingBall.pocketY / TABLE_HEIGHT) * 100}%`,
+            transform: "translate(-50%, -50%) scale(0)",
+            opacity: 0,
+          },
+        ],
+        { duration: 300, easing: "ease-in", fill: "forwards" }
+      );
+    }}
+  >
+    {droppingBall.number}
+  </div>
+))}
 
 {/* Full rack balls */}
 {balls.map((poolBall) => {
