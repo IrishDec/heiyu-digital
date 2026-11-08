@@ -9,6 +9,20 @@ export default function PoolControllerPage() {
   const [paired, setPaired] = useState(false);
   const [power, setPower] = useState(80);
   const [aim, setAim] = useState(0);
+  const [spinX, setSpinX] = useState(0);
+  const [spinY, setSpinY] = useState(0);
+
+  function selectSpin(event: React.PointerEvent<HTMLButtonElement>) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+    const y = (event.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+    const distance = Math.hypot(x, y);
+    const scale = distance > 0.85 ? 0.85 / distance : 1;
+
+    setSpinX(x * scale);
+    setSpinY(y * scale);
+  }
+
 
   function joinRoom() {
     const cleanPin = pin.replace(/\D/g, "").slice(0, 4);
@@ -146,19 +160,42 @@ export default function PoolControllerPage() {
             </div>
           </div>
 
-          <div className="mt-3 w-full rounded-[28px] bg-white/[0.09] p-4 shadow-[0_20px_55px_rgba(0,0,0,0.35)]">
-            <label className="mb-2 block text-lg font-black text-white/80">
-              Shot Power: {power}%
-            </label>
+          <div className="mt-3 flex w-full items-center gap-4 rounded-[28px] bg-white/[0.09] p-3 shadow-[0_20px_55px_rgba(0,0,0,0.35)]">
+            <div className="min-w-0 flex-1">
+              <label className="mb-2 block text-base font-black text-white/80">
+                Shot Power: {power}%
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="90"
+                value={power}
+                onChange={(event) => sendPower(Number(event.target.value))}
+                className="w-full"
+              />
+            </div>
 
-            <input
-              type="range"
-              min="0"
-              max="90"
-              value={power}
-              onChange={(event) => sendPower(Number(event.target.value))}
-              className="w-full"
-            />
+            <div className="flex shrink-0 flex-col items-center gap-1">
+              <button
+                type="button"
+                aria-label="Select cue-ball spin"
+                onPointerDown={selectSpin}
+                className="relative h-[76px] w-[76px] touch-none rounded-full border-2 border-gray-300 bg-white shadow-inner"
+              >
+                <span className="absolute inset-1 rounded-full border border-gray-300/70" />
+                <span
+                  className="absolute h-3 w-3 rounded-full bg-red-600 shadow"
+                  style={{
+                    left: `${50 + spinX * 50}%`,
+                    top: `${50 + spinY * 50}%`,
+                    transform: "translate(-50%, -50%)",
+                  }}
+                />
+              </button>
+              <span className="text-[11px] font-bold text-emerald-300">
+                Cue spin
+              </span>
+            </div>
           </div>
 
           <button

@@ -109,6 +109,7 @@ const isMovingRef = useRef(false);
   const [roomPin, setRoomPin] = useState("----");
   const [cueStriking, setCueStriking] = useState(false);
 
+  const spinRef = useRef({ x: 0, y: 0 });
   const engineRef = useRef<Matter.Engine | null>(null);
   const cueBallRef = useRef<Matter.Body | null>(null);
   const aimRef = useRef(0);
@@ -237,6 +238,27 @@ Matter.World.add(engine.world, [
 ]);
 
 
+    // Experimental cue-ball draw after contacting an object ball.
+    Matter.Events.on(engine, "collisionStart", (event) => {
+      const cue = cueBallRef.current;
+      if (!cue || spinRef.current.y <= 0.15) return;
+
+      const hitObjectBall = event.pairs.some(({ bodyA, bodyB }) =>
+        (bodyA === cue && ballsRef.current.includes(bodyB)) ||
+        (bodyB === cue && ballsRef.current.includes(bodyA))
+      );
+
+      if (!hitObjectBall) return;
+
+      const direction = (aimRef.current * Math.PI) / 180;
+      const draw = spinRef.current.y * 1.8;
+
+      Matter.Body.setVelocity(cue, {
+        x: cue.velocity.x - Math.cos(direction) * draw,
+        y: cue.velocity.y - Math.sin(direction) * draw,
+      });
+    });
+
     return () => {
       Matter.World.clear(engine.world, false);
       Matter.Engine.clear(engine);
@@ -277,6 +299,13 @@ Matter.World.add(engine.world, [
     socket.on("game:power", (data: { power: number }) => {
       powerRef.current = data.power;
       setPower(data.power);
+    });
+
+    socket.on("game:spin", (data: { spinX: number; spinY: number }) => {
+      spinRef.current = {
+        x: Math.max(-1, Math.min(1, data.spinX)),
+        y: Math.max(-1, Math.min(1, data.spinY)),
+      };
     });
 
     socket.on("game:shoot", () => {
