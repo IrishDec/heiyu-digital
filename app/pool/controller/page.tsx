@@ -19,8 +19,17 @@ export default function PoolControllerPage() {
     const distance = Math.hypot(x, y);
     const scale = distance > 0.85 ? 0.85 / distance : 1;
 
-    setSpinX(x * scale);
-    setSpinY(y * scale);
+    const nextSpinX = x * scale;
+    const nextSpinY = y * scale;
+
+    setSpinX(nextSpinX);
+    setSpinY(nextSpinY);
+
+    poolSocket.emit("controller:spin", {
+      pin,
+      spinX: nextSpinX,
+      spinY: nextSpinY,
+    });
   }
 
 
