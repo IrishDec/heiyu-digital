@@ -238,6 +238,24 @@ Matter.World.add(engine.world, [
 ]);
 
 
+    // Play a clack when two pool balls collide.
+    const collisionSound = new Audio("/sounds/pool/ball-collision.wav");
+    collisionSound.volume = 0.4;
+
+    Matter.Events.on(engine, "collisionStart", (event) => {
+      const allBalls = [cueBall, ...rackBodies];
+
+      const ballCollision = event.pairs.some(({ bodyA, bodyB }) =>
+        allBalls.includes(bodyA) && allBalls.includes(bodyB)
+      );
+
+      if (!ballCollision) return;
+
+      const sound = collisionSound.cloneNode(true) as HTMLAudioElement;
+      sound.volume = 0.4;
+      sound.play().catch(() => {});
+    });
+
     // Experimental cue-ball draw after contacting an object ball.
     Matter.Events.on(engine, "collisionStart", (event) => {
       const cue = cueBallRef.current;
@@ -323,6 +341,10 @@ setShotPottedBall(false);
  setCueStriking(true);
 
 setTimeout(() => {
+  const cueSound = new Audio("/sounds/pool/cue-strike.wav");
+  cueSound.volume = 0.55;
+  cueSound.play().catch(() => {});
+
   Matter.Body.applyForce(cueBall, cueBall.position, {
   x: Math.cos(radians) * force,
   y: Math.sin(radians) * force,
@@ -419,6 +441,11 @@ setBall({
       };
 
       setDroppingBalls((current) => [...current, droppingBall]);
+
+      // Play sound when a ball drops into a pocket.
+      const pocketSound = new Audio("/sounds/pool/pocket-drop.wav");
+      pocketSound.volume = 0.5;
+      pocketSound.play().catch(() => {});
 
       setTimeout(() => {
         setDroppingBalls((current) =>
