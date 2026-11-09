@@ -53,6 +53,16 @@ const projects = [
     gradient: "from-sky-900/60 to-indigo-950",
     technologies: ["Community", "Web Design"],
   },
+  {
+    name: "Heiyu Pool",
+    category: "HOBBY PROJECT · INTERACTIVE GAME",
+    description:
+      "A personal hobby project bringing pool to the big screen, with a smartphone as the cue controller. Join using a QR code or room PIN.",
+    href: "/work/heiyu-pool",
+    image: "/portfolio/mockups/HeiyuPool.png",
+    gradient: "from-emerald-900/60 to-slate-950",
+    technologies: ["Next.js", "Socket.IO", "Game Physics"],
+  },
 ];
 
 const services = [
@@ -237,19 +247,7 @@ export default function NewHomepage() {
                 <ProjectCard key={project.name} project={project} />
               ))}
 
-              <div className="flex min-h-80 flex-col items-center justify-center rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-8 text-center">
-                <span className="text-5xl font-light text-indigo-400">+</span>
-                <h3 className="mt-5 text-xl font-bold">
-                  Always Building.
-                </h3>
-                <p className="mt-3 max-w-xs text-sm leading-7 text-zinc-400">
-                  Independent experiments, games and new digital ideas.
-                  More projects are on their way.
-                </p>
-                <span className="mt-6 rounded-full border border-indigo-400/20 px-4 py-2 text-xs text-indigo-300">
-                  Coming Soon
-                </span>
-              </div>
+
             </div>
           </div>
         </section>
